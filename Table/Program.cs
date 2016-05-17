@@ -10,7 +10,7 @@ namespace Table
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(" ");
+            Console.WriteLine("12345");
         }
     }
 }
