@@ -10,6 +10,13 @@ namespace Table
     {
         static void Main(string[] args)
         {
+            byte[] asciiBytes = Encoding.ASCII.GetBytes("ABCDEFGHIJKLMNOPQRSTUVWXYZ");//(A-65)замутить перевод из цифер в буквы на уровне представления
+            //for (int k = 0;k<asciiBytes.Length;k++)
+            //{
+            //    Console.WriteLine(asciiBytes[k]);
+            //}
+
+
             Table table = new Table();
             for (int i = 0; i < 7; i++)
                 for (int j = 0; j < 7; j++)

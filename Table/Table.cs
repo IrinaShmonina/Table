@@ -10,8 +10,8 @@ namespace Table
     public class Table : ITable<Cell>
     {
         private readonly Dictionary<Point, Cell> table;//string заменится на cell везде
-        private int maxRowIndex;
-        private int maxColumnIndex;
+        private int maxRowIndex = 1;
+        private int maxColumnIndex = 1;
 
         public Table()
         {
@@ -26,9 +26,17 @@ namespace Table
             }
             set
             {
-                table[new Point(x, y)] = value.SetNewCoords(x, y);
-                if (y > maxRowIndex) maxRowIndex = y;
-                if (x > maxColumnIndex) maxColumnIndex = x;
+                try
+                {
+                    if (x <= 0 || y <= 0) throw new Exception();//нужно ли здесь исключение, или нет, т к это будет закрытая область для пользователя
+                    table[new Point(x, y)] = value.SetNewCoords(x, y);
+                    if (y > maxRowIndex) maxRowIndex = y;
+                    if (x > maxColumnIndex) maxColumnIndex = x;
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Неверно введенные данные");
+                }
             }
         }
 
@@ -49,8 +57,9 @@ namespace Table
                 {
                     table.Remove(new Point(c, rowIndex));
                 }
+                maxRowIndex++;
             }
-            maxRowIndex++;
+            
         }
 
         public void InsertColumn(int columnIndex)
@@ -70,8 +79,9 @@ namespace Table
                 {
                     table.Remove(new Point(columnIndex, r));
                 }
+                maxColumnIndex++;
             }
-            maxColumnIndex++;
+            
         }
 
         public void CutRow(int rowIndex)
@@ -91,8 +101,9 @@ namespace Table
                 {
                     table.Remove(new Point(c, maxRowIndex));
                 }
+                maxRowIndex--;
             }
-            maxRowIndex--;
+            
         }
 
         public void CutColumn(int columnIndex)
@@ -112,8 +123,9 @@ namespace Table
                 {
                     table.Remove(new Point(maxColumnIndex, r));
                 }
+                maxColumnIndex--;
             }
-            maxColumnIndex--;
+            
         }
 
         
