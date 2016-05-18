@@ -13,6 +13,7 @@ namespace Table
         public int RowNumber;
         public readonly double Height;
         public readonly double Width;
+        public string data;
         
         public Cell(int columnNumber, int rowNumber, int height = 15, int width = 15)
         {
@@ -21,10 +22,9 @@ namespace Table
             this.Height = height;
             this.Width = width;
         }
-
-        public void PushData()
+        public void PushData(string x)
         {
-            
+            data = x;
         }
         //добавил
         public Cell SetNewCoords(int x, int y)

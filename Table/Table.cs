@@ -26,7 +26,7 @@ namespace Table
             }
             set
             {
-                table.Add(new Point(x, y), value.SetNewCoords(x, y));
+                table[new Point(x, y)] = value.SetNewCoords(x, y);
                 if (y > maxRowIndex) maxRowIndex = y;
                 if (x > maxColumnIndex) maxColumnIndex = x;
             }
@@ -39,10 +39,10 @@ namespace Table
                 for (int r = maxRowIndex; r >= rowIndex; r--)
                     for (int c = 0; c <= maxColumnIndex; c++)
                     {
+                        table.Remove(new Point(c, r + 1));
                         if (table.ContainsKey(new Point(c, r)))
-                        {
+                        {                            
                             this[c, r + 1] = this[c, r];
-                            table.Remove(new Point(c, r));
                         }
                     }
                 for (int c = 0; c <= maxColumnIndex; c++)
@@ -60,10 +60,10 @@ namespace Table
                 for (int c = maxColumnIndex; c >= columnIndex; c--)
                     for (int r = 0; r <= maxRowIndex; r++)
                     {
+                        table.Remove(new Point(c + 1, r));
                         if (table.ContainsKey(new Point(c, r)))
-                        {
+                        {                            
                             this[c + 1, r] = this[c, r];
-                            table.Remove(new Point(c, r));
                         }
                     }
                 for (int r = 0; r <= maxRowIndex; r++)
@@ -81,10 +81,10 @@ namespace Table
                 for (int r = rowIndex; r < maxRowIndex; r++)
                     for (int c = 0; c <= maxColumnIndex; c++)
                     {
+                        table.Remove(new Point(c, r));
                         if (table.ContainsKey(new Point(c, r + 1)))
-                        {
+                        {                            
                             this[c, r] = this[c, r + 1];
-                            table.Remove(new Point(c, r + 1));
                         }
                     }
                 for (int c = 0; c <= maxColumnIndex; c++)
@@ -102,10 +102,10 @@ namespace Table
                 for (int c = columnIndex; c < maxColumnIndex; c++)
                     for (int r = 0; r <= maxRowIndex; r++)
                     {
+                        table.Remove(new Point(c, r));
                         if (table.ContainsKey(new Point(c + 1, r)))
-                        {
-                            this[c, r] = this[c + 1, r];
-                            table.Remove(new Point(c + 1, r));
+                        {                            
+                            this[c, r] = this[c + 1, r];                           
                         }
                     }
                 for (int r = 0; r <= maxRowIndex; r++)
