@@ -7,37 +7,45 @@ using System.Threading.Tasks;
 
 namespace Table
 {
-    public class Table
+    public class Table<T> : ITable<T>
     {
-        private readonly Dictionary<Point, string> table;//string заменится на cell везде
+        private readonly Dictionary<Point, T> table;//string заменится на cell везде
         private int maxRowIndex;
         private int maxColumnIndex;
 
         public Table()
         {
-            table = new Dictionary<Point, string>();
+            table = new Dictionary<Point, T>();
         }
 
-        public void Put(int row, int column, string value)
+        public T this[int x, int y]
         {
-            table.Add(new Point(column, row), value);
-            if (row > maxRowIndex) maxRowIndex = row;
-            if (column > maxColumnIndex) maxColumnIndex = column;           
+            get
+            {
+                return table[new Point(x, y)];
+            }
+            set
+            {
+                table.Add(new Point(x, y), value);
+                if (y > maxRowIndex) maxRowIndex = y;
+                if (x > maxColumnIndex) maxColumnIndex = x;
+            }
         }
+
         public void InsertRow(int rowIndex)
         {
-            if (rowIndex<=maxRowIndex)
+            if (rowIndex <= maxRowIndex)
             {
-                for (int r = maxRowIndex;r>=rowIndex;r--)
-                    for (int c = 0;c<=maxColumnIndex;c++)
+                for (int r = maxRowIndex; r >= rowIndex; r--)
+                    for (int c = 0; c <= maxColumnIndex; c++)
                     {
                         if (table.ContainsKey(new Point(c, r)))
                         {
-                            table[new Point(c, r + 1)] = table[new Point(c,r)];
+                            table[new Point(c, r + 1)] = table[new Point(c, r)];
                             table.Remove(new Point(c, r));
                         }
                     }
-                for (int c = 0;c<=maxColumnIndex;c++)
+                for (int c = 0; c <= maxColumnIndex; c++)
                 {
                     table.Remove(new Point(c, rowIndex));
                 }
@@ -52,7 +60,7 @@ namespace Table
                 for (int c = maxColumnIndex; c >= columnIndex; c--)
                     for (int r = 0; r <= maxRowIndex; r++)
                     {
-                        if (table.ContainsKey(new Point(c,r)))
+                        if (table.ContainsKey(new Point(c, r)))
                         {
                             table[new Point(c + 1, r)] = table[new Point(c, r)];
                             table.Remove(new Point(c, r));
@@ -70,7 +78,7 @@ namespace Table
         {
             if (rowIndex <= maxRowIndex)
             {
-                for (int r = rowIndex; r < maxRowIndex;r++ )
+                for (int r = rowIndex; r < maxRowIndex; r++)
                     for (int c = 0; c <= maxColumnIndex; c++)
                     {
                         if (table.ContainsKey(new Point(c, r + 1)))
@@ -108,9 +116,13 @@ namespace Table
             maxColumnIndex--;
         }
 
-        public string Get(int row, int column)
+        
+
+        public void Resize(int deltaX, int deltaY)
         {
-            return table[new Point(column, row)];
+            throw new NotImplementedException();
         }
+
+        
     }
 }
