@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace Table
 {
-    public class Table<T> : ITable<T>
+    public class Table : ITable<Cell>
     {
-        private readonly Dictionary<Point, T> table;//string заменится на cell везде
+        private readonly Dictionary<Point, Cell> table;//string заменится на cell везде
         private int maxRowIndex;
         private int maxColumnIndex;
 
         public Table()
         {
-            table = new Dictionary<Point, T>();
+            table = new Dictionary<Point, Cell>();
         }
 
-        public T this[int x, int y]
+        public Cell this[int x, int y]
         {
             get
             {
@@ -27,6 +27,7 @@ namespace Table
             set
             {
                 table.Add(new Point(x, y), value);
+                table[new Point(x, y)].SetNewCoords(x, y);
                 if (y > maxRowIndex) maxRowIndex = y;
                 if (x > maxColumnIndex) maxColumnIndex = x;
             }

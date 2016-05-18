@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace Table
 {
-    class Cell
+    public class Cell
     {
-        public readonly int ColumnNumber;
-        public readonly int RowNumber;
+        public int ColumnNumber;
+        public int RowNumber;
         public readonly double Height;
         public readonly double Width;
-
         
-
         public Cell(int columnNumber, int rowNumber, int height = 15, int width = 15)
         {
             this.ColumnNumber = columnNumber;
@@ -27,6 +25,12 @@ namespace Table
         public void PushData()
         {
             
+        }
+        //добавил
+        public void SetNewCoords(int x, int y)
+        {
+            ColumnNumber = x;
+            RowNumber = y;
         }
         
     }
