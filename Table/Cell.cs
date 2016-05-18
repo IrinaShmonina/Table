@@ -16,7 +16,7 @@ namespace Table
 
         
 
-        public Cell(int columnNumber, int rowNumber, int height, int width)
+        public Cell(int columnNumber, int rowNumber, int height = 15, int width = 15)
         {
             this.ColumnNumber = columnNumber;
             this.RowNumber = rowNumber;

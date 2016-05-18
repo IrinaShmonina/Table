@@ -41,7 +41,7 @@ namespace Table
                     {
                         if (table.ContainsKey(new Point(c, r)))
                         {
-                            table[new Point(c, r + 1)] = table[new Point(c, r)];
+                            this[c, r + 1] = this[c, r];
                             table.Remove(new Point(c, r));
                         }
                     }
@@ -62,7 +62,7 @@ namespace Table
                     {
                         if (table.ContainsKey(new Point(c, r)))
                         {
-                            table[new Point(c + 1, r)] = table[new Point(c, r)];
+                            this[c + 1, r] = this[c, r];
                             table.Remove(new Point(c, r));
                         }
                     }
@@ -74,7 +74,7 @@ namespace Table
             maxColumnIndex++;
         }
 
-        public void DeleteRow(int rowIndex)
+        public void CutRow(int rowIndex)
         {
             if (rowIndex <= maxRowIndex)
             {
@@ -83,7 +83,7 @@ namespace Table
                     {
                         if (table.ContainsKey(new Point(c, r + 1)))
                         {
-                            table[new Point(c, r)] = table[new Point(c, r + 1)];
+                            this[c, r] = this[c, r + 1];
                             table.Remove(new Point(c, r + 1));
                         }
                     }
@@ -95,7 +95,7 @@ namespace Table
             maxRowIndex--;
         }
 
-        public void DeleteColumn(int columnIndex)
+        public void CutColumn(int columnIndex)
         {
             if (columnIndex <= maxColumnIndex)
             {
@@ -104,7 +104,7 @@ namespace Table
                     {
                         if (table.ContainsKey(new Point(c + 1, r)))
                         {
-                            table[new Point(c, r)] = table[new Point(c + 1, r)];
+                            this[c, r] = this[c + 1, r];
                             table.Remove(new Point(c + 1, r));
                         }
                     }
