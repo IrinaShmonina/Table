@@ -26,8 +26,7 @@ namespace Table
             }
             set
             {
-                table.Add(new Point(x, y), value);
-                table[new Point(x, y)].SetNewCoords(x, y);
+                table.Add(new Point(x, y), value.SetNewCoords(x, y));
                 if (y > maxRowIndex) maxRowIndex = y;
                 if (x > maxColumnIndex) maxColumnIndex = x;
             }

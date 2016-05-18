@@ -27,10 +27,11 @@ namespace Table
             
         }
         //добавил
-        public void SetNewCoords(int x, int y)
+        public Cell SetNewCoords(int x, int y)
         {
             ColumnNumber = x;
             RowNumber = y;
+            return this;
         }
         
     }
