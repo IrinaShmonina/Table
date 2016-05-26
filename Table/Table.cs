@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Table
+namespace App
 {
     public class Table : ITable<Cell>
     {
