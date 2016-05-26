@@ -14,7 +14,6 @@ namespace GUI
         private Table table;
         private MenuStrip mainMenu;
         private TableLayoutPanel tab;
-        private Dictionary<Point, TextBox> textBoxes;
         public AppForm(Table table)
         {
             this.table = table;
@@ -63,22 +62,21 @@ namespace GUI
             {
                 tab.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, table.ColumnsWidth[i]));
             }
-            textBoxes = new Dictionary<Point, TextBox>();
             for (int i = 1; i <= table.ColumnsAmount; i++)
                 for (int j = 1; j <= table.RowsAmount; j++)
                 {
                     var x = i;
                     var y = j;
-                    var textbox = new TextBox();
-                    textbox.TextChanged += (sender, args) =>
-                        {
-                            
-                            if (!table.table.ContainsKey(new Point(x,y)))
+                        var textbox = new TextBox();
+                        textbox.TextChanged += (sender, args) =>
                             {
-                                table.AddCell(x, y);
-                            }
-                        };
-                    tab.Controls.Add(textbox, x, y);
+
+                                if (!table.table.ContainsKey(new Point(x, y)))
+                                {
+                                    table.AddCell(x, y);
+                                }
+                            };
+                        tab.Controls.Add(textbox, x, y);
                 }
             Controls.Add(tab);
 
@@ -108,23 +106,31 @@ namespace GUI
         }
         void InsertRow(object sender, EventArgs e)
         {
-            table.InsertRow(5);
-            Invalidate();
+            var i = 5;
+            table.InsertRow(i);
+            tab.RowStyles.Insert(i, new RowStyle(SizeType.Absolute, table.RowsHeigth[i]));
+            //Invalidate();
         }
         void InsertColumn(object sender, EventArgs e)
         {
-            table.InsertColumn(5);
-            Invalidate();
+            var i = 5;
+            table.InsertColumn(i);
+            tab.ColumnStyles.Insert(i, new ColumnStyle(SizeType.Absolute, table.ColumnsWidth[i]));
+            //Invalidate();
         }
         void RemoveRow(object sender, EventArgs e)
         {
-            table.DeleteRow(5);
-            Invalidate();
+            var i = 5;
+            table.DeleteRow(i);
+            tab.RowStyles.RemoveAt(i);
+            //Invalidate();
         }
         void RemoveColumn(object sender, EventArgs e)
         {
-            table.DeleteColumn(5);
-            Invalidate();
+            var i = 5;
+            table.DeleteColumn(i);
+            tab.ColumnStyles.RemoveAt(i);
+            //Invalidate();
         }
         void ChangeRowHeigth(object sender, EventArgs e)
         {
