@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using App.Table;
+using System.Drawing;
+using System.Reflection;
+using App;
 
-namespace model
+namespace Domain
 {
 
     public static class StringExtensions
@@ -12,40 +14,40 @@ namespace model
             var s = new List<String>();
             var q = "";
             var quote = 0;
-            for (var i = 0; i < str.Length; i++)
+            foreach (char t in str)
             {
                 if (quote < 0)
                     throw new Exception();
-                switch (str[i])
+                switch (t)
                 {
                     case '(':
-                        {
-                            q += str[i];
-                            quote++;
-                            break;
-                        }
+                    {
+                        q += t;
+                        quote++;
+                        break;
+                    }
                     case ';':
+                    {
+                        if (quote == 0)
                         {
-                            if (quote == 0)
-                            {
-                                s.Add(q);
-                                q = "";
-                            }
-                            else
-                                q += str[i];
-                            break;
+                            s.Add(q);
+                            q = "";
                         }
+                        else
+                            q += t;
+                        break;
+                    }
                     case ')':
-                        {
-                            q += str[i];
-                            quote--;
-                            break;
-                        }
+                    {
+                        q += t;
+                        quote--;
+                        break;
+                    }
                     default:
-                        {
-                            q += str[i];
-                            break;
-                        }
+                    {
+                        q += t;
+                        break;
+                    }
                 }
             }
             s.Add(q);
@@ -55,18 +57,18 @@ namespace model
 
     public class TextParser
     {
-        static public Table table;
-        public Dictionary<String, Func<String, String, String>> funcDict;
+        public static Table Table;
+        public Dictionary<String, Func<String, String, String>> FuncDict;
 
         public TextParser()
         {
-            this.funcDict = new Dictionary<string, Func<string, string, string>>();
-            funcDict["СУММ"] = (x, y) => (int.Parse(x) + int.Parse(y)).ToString();
-            funcDict["КОНК"] = (x, y) => x + y;
-            funcDict["УМН"] = (x, y) => (int.Parse(x) * int.Parse(y)).ToString();
+            this.FuncDict = new Dictionary<string, Func<string, string, string>>();
+            FuncDict["СУММ"] = (x, y) => (int.Parse(x) + int.Parse(y)).ToString();
+            FuncDict["КОНК"] = (x, y) => x + y;
+            FuncDict["УМН"] = (x, y) => (int.Parse(x) * int.Parse(y)).ToString();
         }
 
-        public Tuple<List<Cell>, String> parseText(String text)
+        public Tuple<List<Cell>, String> ParseText(String text)
         {
             var list = new List<Cell>();
             if (text[0] != '=')
@@ -75,11 +77,11 @@ namespace model
             {
                 if (text.Length == 3)
                 {
-                    var cell = table[text[1], int.Parse(text[2].ToString())];
-                    return Tuple.Create(new List<Cell>(new Cell[] { cell }), cell.text.ToString());
+                    var cell = Table[new Point( text[1], int.Parse(text[2].ToString()))];
+                    return Tuple.Create(new List<Cell>(new Cell[] { cell }), cell.text);
                 }
                 var newText = text.Substring(1).Replace(" ", "");
-                foreach (var funcname in funcDict.Keys)
+                foreach (var funcname in FuncDict.Keys)
                     if (newText.StartsWith(funcname))
                     {
                         if (!newText.EndsWith(")") || newText[funcname.Length] != '(')
@@ -88,16 +90,15 @@ namespace model
                         var v = new String[substr.Length];
                         for (var i = 0; i < substr.Length; i++)
                         {
-                            var textParser = new TextParser().parseText("=" + substr[i]);
+                            var textParser = new TextParser().ParseText("=" + substr[i]);
                             v[i] = textParser.Item2;
-                            foreach (var e in textParser.Item1)
-                                list.Add(e);
+                            list.AddRange(textParser.Item1);
                         }
-                        return Tuple.Create(list, funcDict[funcname](v[0], v[1]));
+                        return Tuple.Create(list, FuncDict[funcname](v[0], v[1]));
                     }
                 return Tuple.Create(new List<Cell>(), newText);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return Tuple.Create(list, "error");
             }
