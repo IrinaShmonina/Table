@@ -10,12 +10,78 @@ namespace App
     public class Table : ITable<Cell>
     {
         private readonly Dictionary<Point, Cell> table;//string заменится на cell везде
-        private int maxRowIndex = 1;
-        private int maxColumnIndex = 1;
+        private int RowsAmount = 20;
+        private int CollumsAmount = 20;
+        public Dictionary<int, int> RowsHeigth;
+        public Dictionary<int, int> ColumnsWidth;
+
+
+        public void ChangeColumnWidth(int number, int width)
+        {
+            for (int i = 0; i< CollumsAmount; i++)
+            {
+                if (table.ContainsKey(new Point(number,i)))
+                {
+                    table[new Point(number, i)].SetNewSize(width, RowsHeigth[i]);
+                }
+            }
+        }
+        public void ChangeRowHeigth(int number, int heigth)
+        {
+            for (int i = 0; i < RowsAmount; i++)
+            {
+                if (table.ContainsKey(new Point(i,number)))
+                {
+                    table[new Point(i, number)].SetNewSize(ColumnsWidth[i], heigth);
+                }
+            }
+        }
+        public void IncreaseRowsCount(int number)
+        {
+            RowsHeigth.Add(RowsAmount + 1, 0);
+            for (int i = RowsAmount; i >= number; i--)
+            {
+                RowsHeigth[i + 1] = RowsHeigth[i];
+            }
+            RowsHeigth[number] = Cell.defaultHeigth;
+        }
+        public void IncreaseColumnsCount(int number)
+        {
+            ColumnsWidth.Add(CollumsAmount + 1, 0);
+            for (int i = CollumsAmount; i >= number; i--)
+            {
+                ColumnsWidth[i + 1] = ColumnsWidth[i];
+            }
+            ColumnsWidth[number] = Cell.defaultWidth;
+        }
+
+        public void DecreaseRowsCount(int number)
+        {
+            
+            for (int i = number; i < RowsAmount; i++)
+            {
+                RowsHeigth[i] = RowsHeigth[i+1];
+            }
+            RowsHeigth.Remove(RowsAmount);
+        }
+        public void DecreaseColumnsCount(int number)
+        {
+            for (int i = number; i < CollumsAmount; i++)
+            {
+                ColumnsWidth[i] = ColumnsWidth[i + 1];
+            }
+            ColumnsWidth.Remove(CollumsAmount);
+        }
 
         public Table()
         {
             table = new Dictionary<Point, Cell>();
+            RowsHeigth = new Dictionary<int,int>();
+            ColumnsWidth = new Dictionary<int,int>();
+            for (int i = 1; i <= RowsAmount; i++)
+                RowsHeigth[i] = Cell.defaultHeigth;
+            for (int i = 1; i <= CollumsAmount; i++)
+                ColumnsWidth[i] = Cell.defaultWidth;
         }
 
         public Cell this[int x, int y]
@@ -26,115 +92,113 @@ namespace App
             }
             set
             {
-                try
-                {
-                    if (x <= 0 || y <= 0) throw new Exception();//нужно ли здесь исключение, или нет, т к это будет закрытая область для пользователя
-                    table[new Point(x, y)] = value.SetNewCoords(x, y);
-                    if (y > maxRowIndex) maxRowIndex = y;
-                    if (x > maxColumnIndex) maxColumnIndex = x;
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine("Неверно введенные данные");
-                }
+
+                table[new Point(x, y)] = value.SetNewCoords(x, y);
+                if (y > RowsAmount) RowsAmount = y;
+                if (x > CollumsAmount) CollumsAmount = x;
+
             }
         }
 
         public void InsertRow(int rowIndex)
         {
-            if (rowIndex <= maxRowIndex)
+            if (rowIndex <= RowsAmount)
             {
-                for (int r = maxRowIndex; r >= rowIndex; r--)
-                    for (int c = 0; c <= maxColumnIndex; c++)
+                IncreaseRowsCount(rowIndex);
+                for (int r = RowsAmount; r >= rowIndex; r--)
+                    for (int c = 0; c <= CollumsAmount; c++)
                     {
                         table.Remove(new Point(c, r + 1));
                         if (table.ContainsKey(new Point(c, r)))
-                        {                            
+                        {
                             this[c, r + 1] = this[c, r];
                         }
                     }
-                for (int c = 0; c <= maxColumnIndex; c++)
+                for (int c = 0; c <= CollumsAmount; c++)
                 {
                     table.Remove(new Point(c, rowIndex));
                 }
-                maxRowIndex++;
+                RowsAmount++;
             }
-            
+
         }
 
         public void InsertColumn(int columnIndex)
         {
-            if (columnIndex <= maxColumnIndex)
+            if (columnIndex <= CollumsAmount)
             {
-                for (int c = maxColumnIndex; c >= columnIndex; c--)
-                    for (int r = 0; r <= maxRowIndex; r++)
+                IncreaseColumnsCount(columnIndex);
+                for (int c = CollumsAmount; c >= columnIndex; c--)
+                    for (int r = 0; r <= RowsAmount; r++)
                     {
                         table.Remove(new Point(c + 1, r));
                         if (table.ContainsKey(new Point(c, r)))
-                        {                            
+                        {
                             this[c + 1, r] = this[c, r];
                         }
                     }
-                for (int r = 0; r <= maxRowIndex; r++)
+                for (int r = 0; r <= RowsAmount; r++)
                 {
                     table.Remove(new Point(columnIndex, r));
                 }
-                maxColumnIndex++;
+                CollumsAmount++;
             }
-            
+
         }
 
-        public void CutRow(int rowIndex)
+        public void DeleteRow(int rowIndex)
         {
-            if (rowIndex <= maxRowIndex)
+            if (rowIndex <= RowsAmount)
             {
-                for (int r = rowIndex; r < maxRowIndex; r++)
-                    for (int c = 0; c <= maxColumnIndex; c++)
+                DecreaseRowsCount(rowIndex);
+                for (int r = rowIndex; r < RowsAmount; r++)
+                    for (int c = 0; c <= CollumsAmount; c++)
                     {
                         table.Remove(new Point(c, r));
                         if (table.ContainsKey(new Point(c, r + 1)))
-                        {                            
+                        {
                             this[c, r] = this[c, r + 1];
                         }
                     }
-                for (int c = 0; c <= maxColumnIndex; c++)
+                for (int c = 0; c <= CollumsAmount; c++)
                 {
-                    table.Remove(new Point(c, maxRowIndex));
+                    table.Remove(new Point(c, RowsAmount));
                 }
-                maxRowIndex--;
+                RowsAmount--;
             }
-            
+
         }
 
-        public void CutColumn(int columnIndex)
+        public void DeleteColumn(int columnIndex)
         {
-            if (columnIndex <= maxColumnIndex)
+            if (columnIndex <= CollumsAmount)
             {
-                for (int c = columnIndex; c < maxColumnIndex; c++)
-                    for (int r = 0; r <= maxRowIndex; r++)
+                DecreaseColumnsCount(columnIndex);
+                for (int c = columnIndex; c < CollumsAmount; c++)
+                    for (int r = 0; r <= RowsAmount; r++)
                     {
                         table.Remove(new Point(c, r));
                         if (table.ContainsKey(new Point(c + 1, r)))
-                        {                            
-                            this[c, r] = this[c + 1, r];                           
+                        {
+                            this[c, r] = this[c + 1, r];
                         }
                     }
-                for (int r = 0; r <= maxRowIndex; r++)
+                for (int r = 0; r <= RowsAmount; r++)
                 {
-                    table.Remove(new Point(maxColumnIndex, r));
+                    table.Remove(new Point(CollumsAmount, r));
                 }
-                maxColumnIndex--;
+                CollumsAmount--;
             }
-            
+
         }
 
-        
+
 
         public void Resize(int deltaX, int deltaY)
         {
             throw new NotImplementedException();
         }
 
-        
+
     }
 }
