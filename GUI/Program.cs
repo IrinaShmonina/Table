@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using App;
 
 namespace GUI
 {
@@ -13,7 +14,8 @@ namespace GUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var form = new AppForm();
+            var table = new Table();
+            var form = new AppForm(table);
             Application.Run(form);
         }
     }

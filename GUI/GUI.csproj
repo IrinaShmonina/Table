@@ -56,9 +56,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Table\Table.csproj">
+    <ProjectReference Include="..\Table\App.csproj">
       <Project>{0cf2b9d8-1fb7-4e94-a8bb-c23cc2aeb607}</Project>
-      <Name>Table</Name>
+      <Name>App</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
