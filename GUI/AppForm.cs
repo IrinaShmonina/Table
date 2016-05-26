@@ -11,13 +11,17 @@ namespace GUI
 {
     class AppForm : Form
     {
-        private Cell table;
+        private Table table;
+        private MenuItem mainMenu;
         public AppForm(Table table)
         {
             this.table = table;
             this.Text = "Электронная Таблица";
-            this.Size = new Size(500, 500);
-            //this.ClientSize = new Size(300, 300);
+            this.MinimumSize = new Size(800, 600);
+            this.AutoSize = true;
+            this.WindowState = FormWindowState.Maximized;
+            this.Resize += (sender, args) => { };
+
 
         }
     }
