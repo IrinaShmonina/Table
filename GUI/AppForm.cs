@@ -108,14 +108,44 @@ namespace GUI
         {
             var i = 5;
             table.InsertRow(i);
-            tab.RowStyles.Insert(i, new RowStyle(SizeType.Absolute, table.RowsHeigth[i]));
-            //Invalidate();
+            //tab.RowStyles.Insert(i, new RowStyle(SizeType.Absolute, table.RowsHeigth[i]));
+            //for (int j = 1; j <= table.ColumnsAmount; j++)
+            //{
+            //    var x = j;
+            //    var textbox = new TextBox();
+            //    textbox.TextChanged += (s, a) =>
+            //    {
+
+            //        if (!table.table.ContainsKey(new Point(x, i)))
+            //        {
+            //            table.AddCell(x, i);
+            //        }
+            //    };
+            //    tab.Controls.Add(textbox, x, i);
+            //}
         }
         void InsertColumn(object sender, EventArgs e)
         {
             var i = 5;
             table.InsertColumn(i);
-            tab.ColumnStyles.Insert(i, new ColumnStyle(SizeType.Absolute, table.ColumnsWidth[i]));
+            //tab.ColumnStyles.Insert(i, new ColumnStyle(SizeType.Absolute, table.ColumnsWidth[i]));
+            //for (int j = 1; j <= table.RowsAmount; j++)
+            //{
+            //    var y = j;
+            //    var textbox = new TextBox();
+            //    textbox.TextChanged += (s, a) =>
+            //    {
+
+            //        if (!table.table.ContainsKey(new Point(i, y)))
+            //        {
+            //            table.AddCell(i, y);
+            //        }
+            //    };
+            //    tab.Controls.Add(textbox, i, y);
+            //}
+
+
+            
             //Invalidate();
         }
         void RemoveRow(object sender, EventArgs e)
