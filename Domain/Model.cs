@@ -77,7 +77,7 @@ namespace Domain
             {
                 if (text.Length == 3)
                 {
-                    var cell = Table[new Point( text[1], int.Parse(text[2].ToString()))];
+                    var cell = Table[ text[1], int.Parse(text[2].ToString())];
                     return Tuple.Create(new List<Cell>(new Cell[] { cell }), cell.text);
                 }
                 var newText = text.Substring(1).Replace(" ", "");

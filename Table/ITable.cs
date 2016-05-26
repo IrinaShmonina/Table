@@ -9,7 +9,7 @@ namespace App
 {
     interface ITable<T>
     {
-        T this[int x, int y] { get; set; }
+        Cell this[int x, int y] { get; set; }
         void InsertRow(int y);
         void InsertColumn(int x);
         void DeleteRow(int y);
