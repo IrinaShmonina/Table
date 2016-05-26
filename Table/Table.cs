@@ -9,16 +9,17 @@ namespace App
 {
     public class Table : ITable<Cell>
     {
-        private readonly Dictionary<Point, Cell> table;//string заменится на cell везде
-        private int RowsAmount = 20;
-        private int CollumsAmount = 20;
+        public readonly Dictionary<Point, Cell> table;//string заменится на cell везде
+        public int RowsAmount = 20;
+        public int ColumnsAmount = 20;
         public Dictionary<int, int> RowsHeigth;
         public Dictionary<int, int> ColumnsWidth;
 
 
         public void ChangeColumnWidth(int number, int width)
         {
-            for (int i = 0; i< CollumsAmount; i++)
+            ColumnsWidth[number] = width;
+            for (int i = 1; i<= ColumnsAmount; i++)
             {
                 if (table.ContainsKey(new Point(number,i)))
                 {
@@ -28,7 +29,8 @@ namespace App
         }
         public void ChangeRowHeigth(int number, int heigth)
         {
-            for (int i = 0; i < RowsAmount; i++)
+            RowsHeigth[number] = heigth;
+            for (int i = 1; i <= RowsAmount; i++)
             {
                 if (table.ContainsKey(new Point(i,number)))
                 {
@@ -47,8 +49,8 @@ namespace App
         }
         public void IncreaseColumnsCount(int number)
         {
-            ColumnsWidth.Add(CollumsAmount + 1, 0);
-            for (int i = CollumsAmount; i >= number; i--)
+            ColumnsWidth.Add(ColumnsAmount + 1, 0);
+            for (int i = ColumnsAmount; i >= number; i--)
             {
                 ColumnsWidth[i + 1] = ColumnsWidth[i];
             }
@@ -66,11 +68,11 @@ namespace App
         }
         public void DecreaseColumnsCount(int number)
         {
-            for (int i = number; i < CollumsAmount; i++)
+            for (int i = number; i < ColumnsAmount; i++)
             {
                 ColumnsWidth[i] = ColumnsWidth[i + 1];
             }
-            ColumnsWidth.Remove(CollumsAmount);
+            ColumnsWidth.Remove(ColumnsAmount);
         }
 
         public Table()
@@ -79,11 +81,14 @@ namespace App
             RowsHeigth = new Dictionary<int,int>();
             ColumnsWidth = new Dictionary<int,int>();
             for (int i = 1; i <= RowsAmount; i++)
-                RowsHeigth[i] = Cell.defaultHeigth;
-            for (int i = 1; i <= CollumsAmount; i++)
-                ColumnsWidth[i] = Cell.defaultWidth;
+                RowsHeigth.Add(i, Cell.defaultHeigth);
+            for (int i = 1; i <= ColumnsAmount; i++)
+                ColumnsWidth.Add(i, Cell.defaultWidth);
         }
-
+        public void AddCell(int x, int y)
+        {
+            table.Add(new Point(x, y), new Cell(x, y, RowsHeigth[x], ColumnsWidth[y]));
+        }
         public Cell this[int x, int y]
         {
             get
@@ -95,7 +100,7 @@ namespace App
 
                 table[new Point(x, y)] = value.SetNewCoords(x, y);
                 if (y > RowsAmount) RowsAmount = y;
-                if (x > CollumsAmount) CollumsAmount = x;
+                if (x > ColumnsAmount) ColumnsAmount = x;
 
             }
         }
@@ -106,7 +111,7 @@ namespace App
             {
                 IncreaseRowsCount(rowIndex);
                 for (int r = RowsAmount; r >= rowIndex; r--)
-                    for (int c = 0; c <= CollumsAmount; c++)
+                    for (int c = 1; c <= ColumnsAmount; c++)
                     {
                         table.Remove(new Point(c, r + 1));
                         if (table.ContainsKey(new Point(c, r)))
@@ -114,7 +119,7 @@ namespace App
                             this[c, r + 1] = this[c, r];
                         }
                     }
-                for (int c = 0; c <= CollumsAmount; c++)
+                for (int c = 1; c <= ColumnsAmount; c++)
                 {
                     table.Remove(new Point(c, rowIndex));
                 }
@@ -125,11 +130,11 @@ namespace App
 
         public void InsertColumn(int columnIndex)
         {
-            if (columnIndex <= CollumsAmount)
+            if (columnIndex <= ColumnsAmount)
             {
                 IncreaseColumnsCount(columnIndex);
-                for (int c = CollumsAmount; c >= columnIndex; c--)
-                    for (int r = 0; r <= RowsAmount; r++)
+                for (int c = ColumnsAmount; c >= columnIndex; c--)
+                    for (int r = 1; r <= RowsAmount; r++)
                     {
                         table.Remove(new Point(c + 1, r));
                         if (table.ContainsKey(new Point(c, r)))
@@ -137,11 +142,11 @@ namespace App
                             this[c + 1, r] = this[c, r];
                         }
                     }
-                for (int r = 0; r <= RowsAmount; r++)
+                for (int r = 1; r <= RowsAmount; r++)
                 {
                     table.Remove(new Point(columnIndex, r));
                 }
-                CollumsAmount++;
+                ColumnsAmount++;
             }
 
         }
@@ -152,7 +157,7 @@ namespace App
             {
                 DecreaseRowsCount(rowIndex);
                 for (int r = rowIndex; r < RowsAmount; r++)
-                    for (int c = 0; c <= CollumsAmount; c++)
+                    for (int c = 1; c <= ColumnsAmount; c++)
                     {
                         table.Remove(new Point(c, r));
                         if (table.ContainsKey(new Point(c, r + 1)))
@@ -160,7 +165,7 @@ namespace App
                             this[c, r] = this[c, r + 1];
                         }
                     }
-                for (int c = 0; c <= CollumsAmount; c++)
+                for (int c = 1; c <= ColumnsAmount; c++)
                 {
                     table.Remove(new Point(c, RowsAmount));
                 }
@@ -171,11 +176,11 @@ namespace App
 
         public void DeleteColumn(int columnIndex)
         {
-            if (columnIndex <= CollumsAmount)
+            if (columnIndex <= ColumnsAmount)
             {
                 DecreaseColumnsCount(columnIndex);
-                for (int c = columnIndex; c < CollumsAmount; c++)
-                    for (int r = 0; r <= RowsAmount; r++)
+                for (int c = columnIndex; c < ColumnsAmount; c++)
+                    for (int r = 1; r <= RowsAmount; r++)
                     {
                         table.Remove(new Point(c, r));
                         if (table.ContainsKey(new Point(c + 1, r)))
@@ -183,11 +188,11 @@ namespace App
                             this[c, r] = this[c + 1, r];
                         }
                     }
-                for (int r = 0; r <= RowsAmount; r++)
+                for (int r = 1; r <= RowsAmount; r++)
                 {
-                    table.Remove(new Point(CollumsAmount, r));
+                    table.Remove(new Point(ColumnsAmount, r));
                 }
-                CollumsAmount--;
+                ColumnsAmount--;
             }
 
         }

@@ -9,8 +9,8 @@ namespace App
 {
     public class Cell
     {
-        public const int defaultWidth = 30;
-        public const int defaultHeigth = 15;
+        public const int defaultWidth = 50;
+        public const int defaultHeigth = 25;
         public int ColumnNumber;
         public int RowNumber;
         private int Height;
@@ -35,11 +35,10 @@ namespace App
             RowNumber = y;
             return this;
         }
-        public Cell SetNewSize(int width, int heigth)
+        public void SetNewSize(int width, int heigth)
         {
             Width = width;
             Height = heigth;
-            return this;
         }
         
     }
