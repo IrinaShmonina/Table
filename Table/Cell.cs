@@ -9,13 +9,15 @@ namespace App
 {
     public class Cell
     {
+        public const int defaultWidth = 50;
+        public const int defaultHeigth = 25;
         public int ColumnNumber;
         public int RowNumber;
-        public readonly double Height;
-        public readonly double Width;
+        private int Height;
+        private int Width;
         public string data;
-        
-        public Cell(int columnNumber, int rowNumber, int height = 15, int width = 15)
+
+        public Cell(int columnNumber, int rowNumber, int height = defaultHeigth, int width = defaultWidth)
         {
             this.ColumnNumber = columnNumber;
             this.RowNumber = rowNumber;
@@ -32,6 +34,11 @@ namespace App
             ColumnNumber = x;
             RowNumber = y;
             return this;
+        }
+        public void SetNewSize(int width, int heigth)
+        {
+            Width = width;
+            Height = heigth;
         }
         
     }
