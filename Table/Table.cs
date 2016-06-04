@@ -70,23 +70,47 @@ namespace App
             ColumnsWidth[ColumnsAmount] = Cell.defaultWidth;
         }
 
-        public Dictionary<Point, Point> GetShiftedCellsCoords(int xShift, int yShift)
+        public Dictionary<int, int> GetShiftedRowsCoords(int yShift)
         {
-            var result = new Dictionary<Point, Point>();
-            var xCoord = xShift;
+            var result = new Dictionary<int, int>();
             var yCoord = yShift;
-            for (int i = 1; i <= ColumnsWidth.Count; i++)
-            {               
-                for (int j = 1; j <= RowsHeigth.Count; j++)
-                {
-                    result.Add(new Point(i,j),new Point(xCoord, yCoord));
-                    yCoord += RowsHeigth[j];
-                }
-                xCoord += ColumnsWidth[i];
-                yCoord = yShift;
+            for (int i = 1; i <= RowsHeigth.Count; i++)
+            {
+                result.Add(i, yCoord);
+                yCoord += RowsHeigth[i];
             }
             return result;
         }
+
+        public Dictionary<int, int> GetShiftedColumnsCoords(int xShift)
+        {
+            var result = new Dictionary<int, int>();
+            var xCoord = xShift;
+            for (int i = 1; i <= ColumnsWidth.Count; i++)
+            {
+                result.Add(i, xCoord);
+                xCoord += ColumnsWidth[i];
+            }
+            return result;
+        }
+
+        //public Dictionary<Point, Point> GetShiftedCellsCoords(int xShift, int yShift)
+        //{
+        //    var result = new Dictionary<Point, Point>();
+        //    var xCoord = xShift;
+        //    var yCoord = yShift;
+        //    for (int i = 1; i <= ColumnsWidth.Count; i++)
+        //    {               
+        //        for (int j = 1; j <= RowsHeigth.Count; j++)
+        //        {
+        //            result.Add(new Point(i,j),new Point(xCoord, yCoord));
+        //            yCoord += RowsHeigth[j];
+        //        }
+        //        xCoord += ColumnsWidth[i];
+        //        yCoord = yShift;
+        //    }
+        //    return result;
+        //}
 
         public Table()
         {
