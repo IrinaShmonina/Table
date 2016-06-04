@@ -18,6 +18,8 @@ namespace GUI
         private TextBox focusedCell;
         private TextBox focusedCellCoords;
         private TextBox currentTextBox;
+        private TextBox AAA;
+        private TextBox BBB;
         
         //private TableLayoutPanel tab;
         private Dictionary<Point, TextBox> textBoxes;
@@ -80,6 +82,19 @@ namespace GUI
             focusedCellCoords.Enabled = false;
             Controls.Add(focusedCellCoords);
 
+            AAA = new TextBox();
+            AAA.Location = new Point(600, 40);
+            AAA.Size = new Size(30, 30);
+            AAA.Text = table.MaxChangedColumn.ToString();
+            Controls.Add(AAA);
+
+            BBB = new TextBox();
+            BBB.Location = new Point(630, 40);
+            BBB.Size = new Size(30, 30);
+            BBB.Text = table.MaxChangedRow.ToString();
+            Controls.Add(BBB);
+
+
 
             textBoxes = new Dictionary<Point, TextBox>();
             labels = new Dictionary<Point, Label>();
@@ -95,6 +110,11 @@ namespace GUI
 
                 };
         }
+        void RRR()
+        {
+            AAA.Text = table.MaxChangedColumn.ToString();
+            BBB.Text = table.MaxChangedRow.ToString();
+        }
         void DrawTable()
         {
             //foreach (var e in labels.Values)
@@ -105,7 +125,7 @@ namespace GUI
             RowsCoords = table.GetShiftedRowsCoords(startYcoord);
             ColumnsCoords = table.GetShiftedColumnsCoords(startXcoord);
 
-            for (int x = 1; x <= table.ColumnsAmount; x++)
+            for (int x = 1; x <= table.TableWidth; x++)
                 if (ColumnsCoords[x] < this.Right - 20)
                 {
                     var i = x;
@@ -144,7 +164,7 @@ namespace GUI
                 }
                 else break;
 
-            for (int y = 1; y <= table.RowsAmount; y++)
+            for (int y = 1; y <= table.TableHeight; y++)
                 if (RowsCoords[y] < this.Bottom - 20)
                 {
                     var j = y;
@@ -188,12 +208,12 @@ namespace GUI
             //    Controls.Remove(e);
             //}
             //Parallel.For(1, table.ColumnsAmount, x =>
-            for (int x = 1; x <= table.ColumnsAmount; x++)
+            for (int x = 1; x <= table.TableWidth; x++)
             {
                 if (ColumnsCoords[x] < this.Right - 20)
                 {
                     //var thread = new Thread();
-                    for (int y = 1; y <= table.RowsAmount; y++)
+                    for (int y = 1; y <= table.TableHeight; y++)
                     {
                         if (RowsCoords[y] < this.Bottom - 20)
                         {
@@ -219,9 +239,11 @@ namespace GUI
                                 };
                                 textbox.TextChanged += (s, a) =>
                                 {
-                                    table[i, j].PushData(textbox.Text);
+                                    table.PushData(new Point(i, j), textbox.Text);
+                                    RRR();
                                     currentTextBox = textbox;
                                     focusedCell.Text = textbox.Text;
+                                    DrawTable();
                                 };
                                 textBoxes.Add(new Point(i, j), textbox);
                                 Controls.Add(textbox);
@@ -243,9 +265,16 @@ namespace GUI
                                 };
                                 textbox.TextChanged += (s, a) =>
                                 {
-                                    table[i, j].PushData(textbox.Text);
+                                    
+                                    table.PushData(new Point(i,j),textbox.Text);
+                                    RRR();
                                     currentTextBox = textbox;
                                     focusedCell.Text = textbox.Text;
+                                    DrawTable();
+
+                                    //if (x > table.MaxChangedColumn) table.MaxChangedColumn = x;
+                                    //if (y == table.MaxChangedRow) table.MaxChangedRow = y;
+                                    //table.NeedResize();
                                 };
                             }
 
@@ -263,31 +292,37 @@ namespace GUI
         void InsertRow(int number)
         {
             table.InsertRow(number);
+            RRR();
             DrawTable();
         }
         void InsertColumn(int number)
         {
             table.InsertColumn(number);
+            RRR();
             DrawTable();
         }
         void RemoveRow(int number)
         {
             table.DeleteRow(number);
+            RRR();
             DrawTable();
         }
         void RemoveColumn(int number)
         {
             table.DeleteColumn(number);
+            RRR();
             DrawTable();
         }
         void ChangeRowHeight(int number)
         {
             table.ChangeRowHeight(number, 30);
+            RRR();
             DrawTable();
         }
         void ChangeColumnWidth(int number)
         {
             table.ChangeColumnWidth(number, 30);
+            RRR();
             DrawTable();
         }
 
