@@ -12,7 +12,7 @@ namespace App
         public readonly Dictionary<Point, Cell> table;//string заменится на cell везде
         public int RowsAmount = 100;
         public int ColumnsAmount = 100;
-        public Dictionary<int, int> RowsHeigth;
+        public Dictionary<int, int> RowsHeight;
         public Dictionary<int, int> ColumnsWidth;
 
 
@@ -21,13 +21,13 @@ namespace App
             ColumnsWidth[number] = width;
             for (int i = 1; i<= ColumnsAmount; i++)
             {
-                    table[new Point(number, i)].SetNewSize(width, RowsHeigth[i]);
+                    table[new Point(number, i)].SetNewSize(width, RowsHeight[i]);
                 }
             }
 
-        public void ChangeRowHeigth(int number, int heigth)
+        public void ChangeRowHeight(int number, int heigth)
         {
-            RowsHeigth[number] = heigth;
+            RowsHeight[number] = heigth;
             for (int i = 1; i <= RowsAmount; i++)
             {
                     table[new Point(i, number)].SetNewSize(ColumnsWidth[i], heigth);
@@ -38,9 +38,9 @@ namespace App
         {
             for (int i = RowsAmount - 1; i >= number; i--)
             {
-                RowsHeigth[i + 1] = RowsHeigth[i];
+                RowsHeight[i + 1] = RowsHeight[i];
             }
-            RowsHeigth[number] = Cell.defaultHeigth;
+            RowsHeight[number] = Cell.defaultHeight;
         }
 
         public void IncreaseColumnsCount(int number)
@@ -56,9 +56,9 @@ namespace App
         {
             for (int i = number; i < RowsAmount; i++)
             {
-                RowsHeigth[i] = RowsHeigth[i+1];
+                RowsHeight[i] = RowsHeight[i+1];
             }
-            RowsHeigth[RowsAmount] = Cell.defaultHeigth;
+            RowsHeight[RowsAmount] = Cell.defaultHeight;
         }
 
         public void DecreaseColumnsCount(int number)
@@ -74,10 +74,10 @@ namespace App
         {
             var result = new Dictionary<int, int>();
             var yCoord = yShift;
-            for (int i = 1; i <= RowsHeigth.Count; i++)
+            for (int i = 1; i <= RowsHeight.Count; i++)
             {
                 result.Add(i, yCoord);
-                yCoord += RowsHeigth[i];
+                yCoord += RowsHeight[i];
             }
             return result;
         }
@@ -116,7 +116,7 @@ namespace App
         {
             table = new Dictionary<Point, Cell>();
             ColumnsWidth = new Dictionary<int, int>();
-            RowsHeigth = new Dictionary<int, int>();
+            RowsHeight = new Dictionary<int, int>();
             
             for (int x = 1; x <= ColumnsAmount; x++) // инициализация словаря
             {
@@ -130,7 +130,7 @@ namespace App
                 ColumnsWidth.Add(i, Cell.defaultWidth);
 
             for (int i = 1; i <= RowsAmount; i++)
-                RowsHeigth.Add(i, Cell.defaultHeigth);
+                RowsHeight.Add(i, Cell.defaultHeight);
             
         }
         //public Cell TryAddCell(int x, int y)

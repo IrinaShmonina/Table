@@ -10,7 +10,7 @@ namespace App
     public class Cell
     {
         public const int defaultWidth = 50;
-        public const int defaultHeigth = 20;
+        public const int defaultHeight = 20;
         public int ColumnNumber;
         public int RowNumber;
         private int Height;
@@ -18,7 +18,7 @@ namespace App
         public string data;
         public string text;
 
-        public Cell(int columnNumber, int rowNumber, int height = defaultHeigth, int width = defaultWidth, string data = "")
+        public Cell(int columnNumber, int rowNumber, int height = defaultHeight, int width = defaultWidth, string data = "")
         {
             this.ColumnNumber = columnNumber;
             this.RowNumber = rowNumber;
