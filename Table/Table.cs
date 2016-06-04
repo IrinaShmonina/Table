@@ -22,8 +22,8 @@ namespace App
             for (int i = 1; i<= ColumnsAmount; i++)
             {
                     table[new Point(number, i)].SetNewSize(width, RowsHeigth[i]);
+                }
             }
-        }
 
         public void ChangeRowHeigth(int number, int heigth)
         {
@@ -31,8 +31,8 @@ namespace App
             for (int i = 1; i <= RowsAmount; i++)
             {
                     table[new Point(i, number)].SetNewSize(ColumnsWidth[i], heigth);
+                }
             }
-        }
 
         public void IncreaseRowsCount(int number)
         {
@@ -53,7 +53,7 @@ namespace App
         }
 
         public void DecreaseRowsCount(int number)
-        {           
+        {
             for (int i = number; i < RowsAmount; i++)
             {
                 RowsHeigth[i] = RowsHeigth[i+1];

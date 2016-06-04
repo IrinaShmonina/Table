@@ -16,6 +16,7 @@ namespace App
         private int Height;
         private int Width;
         public string data;
+        public string text;
 
         public Cell(int columnNumber, int rowNumber, int height = defaultHeigth, int width = defaultWidth, string data = "")
         {
