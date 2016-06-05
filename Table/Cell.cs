@@ -9,7 +9,7 @@ namespace App
 {
     public class Cell
     {
-        public const int defaultWidth = 50;
+        public const int defaultWidth = 30;
         public const int defaultHeight = 20;
         public int ColumnNumber { get; private set; }
         public int RowNumber { get; private set; }

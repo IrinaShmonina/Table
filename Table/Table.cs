@@ -19,8 +19,8 @@ namespace App
 
         public Table()
         {
-            TableWidth = 20;
-            TableHeight = 20;
+            TableWidth = 200;
+            TableHeight = 200;
             MaxChangedColumn = 0;
             MaxChangedRow = 0;
 
@@ -104,11 +104,11 @@ namespace App
             NeedResize();
         }
 
-        public Dictionary<int, int> GetShiftedRowsCoords(int yShift)
+        public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInPixel, int yShiftInCells)
         {
             var result = new Dictionary<int, int>();
-            var yCoord = yShift;
-            for (int i = 1; i <= RowsHeight.Count; i++)
+            var yCoord = yShiftInPixel;
+            for (int i = yShiftInCells + 1; i <= RowsHeight.Count; i++)
             {
                 result.Add(i, yCoord);
                 yCoord += RowsHeight[i];
@@ -116,11 +116,11 @@ namespace App
             return result;
         }
 
-        public Dictionary<int, int> GetShiftedColumnsCoords(int xShift)
+        public Dictionary<int, int> GetShiftedColumnsCoords(int xShiftInPixel, int xShiftInCells)
         {
             var result = new Dictionary<int, int>();
-            var xCoord = xShift;
-            for (int i = 1; i <= ColumnsWidth.Count; i++)
+            var xCoord = xShiftInPixel;
+            for (int i = xShiftInCells + 1; i <= ColumnsWidth.Count; i++)
             {
                 result.Add(i, xCoord);
                 xCoord += ColumnsWidth[i];
