@@ -11,12 +11,12 @@ namespace App
     {
         public const int defaultWidth = 50;
         public const int defaultHeight = 20;
-        public int ColumnNumber;
-        public int RowNumber;
-        private int Height;
-        private int Width;
-        public string data;
-        public string text;
+        public int ColumnNumber { get; private set; }
+        public int RowNumber { get; private set; }
+        public int Height { get; private set; }
+        public int Width { get; private set; }
+        public string Data { get; private set; }
+        public string text; //{ get; private set; }
 
         public Cell(int columnNumber, int rowNumber, int height = defaultHeight, int width = defaultWidth, string data = "")
         {
@@ -24,18 +24,17 @@ namespace App
             this.RowNumber = rowNumber;
             this.Height = height;
             this.Width = width;
-            this.data = data;
+            this.Data = data;
         }
         public void PushData(string x)
         {
-            data = x;
+            Data = x;
         }
         //добавил
-        public Cell SetNewCoords(int x, int y)
+        public void SetNewCoords(int x, int y)
         {
             ColumnNumber = x;
             RowNumber = y;
-            return this;
         }
         public void SetNewSize(int width, int heigth)
         {

@@ -40,8 +40,8 @@ namespace App
                 Console.WriteLine("");
             }
 
-            table.DeleteColumn(2);
-            table.DeleteRow(2);
+            table.RemoveColumn(2);
+            table.RemoveRow(2);
             for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)
@@ -77,8 +77,8 @@ namespace App
                 Console.WriteLine("");
             }
 
-            table.DeleteColumn(2);
-            table.DeleteRow(2);
+            table.RemoveColumn(2);
+            table.RemoveRow(2);
             for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)
@@ -114,8 +114,8 @@ namespace App
                 Console.WriteLine("");
             }
 
-            table.DeleteColumn(4);
-            table.DeleteRow(4);
+            table.RemoveColumn(4);
+            table.RemoveRow(4);
             for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)

@@ -21,10 +21,8 @@ namespace GUI
         private TextBox MaxXCoord;
         private TextBox MaxYCoord;
         
-        //private TableLayoutPanel tab;
         private Dictionary<Point, TextBox> textBoxes;
         private Dictionary<Point, Label> labels;
-        //public Dictionary<Point, Point> CellsCoords;
         public Dictionary<int, int> RowsCoords;
         public Dictionary<int, int> ColumnsCoords;
         const int startXcoord = 30;
@@ -71,7 +69,8 @@ namespace GUI
             focusedCell.Height = 20;
             focusedCell.TextChanged += (sender, args) =>
                 {
-                    currentTextBox.Text = focusedCell.Text;
+                    if (currentTextBox!=null)
+                        currentTextBox.Text = focusedCell.Text;
                 };
             Controls.Add(focusedCell);
 
@@ -136,31 +135,23 @@ namespace GUI
                     ToolStripMenuItem changeColumnWidth = new ToolStripMenuItem("Изменить ширину столбца", null, (s, a) => { ChangeColumnWidth(i); });
                     contextMenu.Items.AddRange(new[] { insertColumn, removeColumn, changeColumnWidth });
 
+                    Label label;
                     if (!labels.ContainsKey(new Point(i, 0)))
                     {
-                        var label = new Label();
-                        label.Location = new Point(ColumnsCoords[i], startYcoord - 20);
-                        label.Size = new Size(table.ColumnsWidth[i], 20);
-
-                        label.Text = i.ToString();
-                        label.BorderStyle = BorderStyle.Fixed3D;
-                        label.TextAlign = ContentAlignment.MiddleCenter;
-                        label.ContextMenuStrip = contextMenu;
-
+                        label = new Label();
                         labels.Add(new Point(i, 0), label);
                         Controls.Add(label);
                     }
                     else
-                    {
-                        var label = labels[new Point(i, 0)];
-                        label.Location = new Point(ColumnsCoords[i], startYcoord - 20);
-                        label.Size = new Size(table.ColumnsWidth[i], 20);
+                        label = labels[new Point(i, 0)];
 
-                        label.Text = i.ToString();
-                        label.BorderStyle = BorderStyle.Fixed3D;
-                        label.TextAlign = ContentAlignment.MiddleCenter;
+                    label.Location = new Point(ColumnsCoords[i], startYcoord - 20);
+                    label.Size = new Size(table.ColumnsWidth[i], 20);
+                    label.Text = i.ToString();
+                    label.BorderStyle = BorderStyle.Fixed3D;
+                    label.TextAlign = ContentAlignment.MiddleCenter;
+                    label.ContextMenuStrip = contextMenu;
 
-                    }
                 }
                 else break;
 
@@ -168,38 +159,29 @@ namespace GUI
                 if (RowsCoords[y] < this.Bottom - 20)
                 {
                     var j = y;
+
                     var contextMenu = new ContextMenuStrip();
                     ToolStripMenuItem insertRow = new ToolStripMenuItem("Вставить строку", null, (s, a) => { InsertRow(j); });
                     ToolStripMenuItem removeRow = new ToolStripMenuItem("Удалить строку", null, (s, a) => { RemoveRow(j); });
                     ToolStripMenuItem changeRowHeight = new ToolStripMenuItem("Изменить высоту строки", null, (s, a) => { ChangeRowHeight(j); });
                     contextMenu.Items.AddRange(new[] { insertRow, removeRow, changeRowHeight });
 
-                    
+                    Label label;
                     if (!labels.ContainsKey(new Point(0, j)))
                     {
-                        var label = new Label();
-                        label.Location = new Point(startXcoord - 30, RowsCoords[j]);
-                        label.Size = new Size(30, table.RowsHeight[j]);
-
-                        label.Text = j.ToString();
-                        label.TextAlign = ContentAlignment.MiddleCenter;
-                        label.BorderStyle = BorderStyle.Fixed3D;
-                        label.ContextMenuStrip = contextMenu;
-
+                        label = new Label();
                         labels.Add(new Point(0, j), label);
                         Controls.Add(label);
                     }
                     else
-                    {
-                        var label = labels[new Point(0, j)];
-                        label.Location = new Point(startXcoord - 30, RowsCoords[j]);
-                        label.Size = new Size(30, table.RowsHeight[j]);
+                        label = labels[new Point(0, j)];
 
-                        label.Text = j.ToString();
-                        label.TextAlign = ContentAlignment.MiddleCenter;
-                        label.BorderStyle = BorderStyle.Fixed3D;
-
-                    }
+                    label.Location = new Point(startXcoord - 30, RowsCoords[j]);
+                    label.Size = new Size(30, table.RowsHeight[j]);
+                    label.Text = j.ToString();
+                    label.TextAlign = ContentAlignment.MiddleCenter;
+                    label.BorderStyle = BorderStyle.Fixed3D;
+                    label.ContextMenuStrip = contextMenu;
                 }
                 else break;
 
@@ -207,30 +189,33 @@ namespace GUI
             //{
             //    Controls.Remove(e);
             //}
-            //Parallel.For(1, table.ColumnsAmount, x =>
-            for (int x = 1; x <= table.TableWidth; x++)
+            //Parallel.For(1, table.TableWidth, x =>
             {
-                if (ColumnsCoords[x] < this.Right - 20)
+                for (int x = 1; x <= table.TableWidth; x++)
                 {
-                    //var thread = new Thread();
-                    for (int y = 1; y <= table.TableHeight; y++)
+                    if (ColumnsCoords[x] < this.Right - 20)
                     {
-                        if (RowsCoords[y] < this.Bottom - 20)
+                        for (int y = 1; y <= table.TableHeight; y++)
                         {
-                            var i = x;
-                            var j = y;
-
-                            if (!textBoxes.ContainsKey(new Point(i, j)))
+                            if (RowsCoords[y] < this.Bottom - 20)
                             {
-                                var textbox = new TextBox();
-                                textbox.Location = new Point(ColumnsCoords[i], RowsCoords[j]);
+                                var i = x;
+                                var j = y;
+                                TextBox textbox;
+                                if (!textBoxes.ContainsKey(new Point(i, j)))
+                                {
+                                    textbox = new TextBox();
+                                    textBoxes.Add(new Point(i, j), textbox);
+                                    Controls.Add(textbox);
+                                }
+                                else
+                                    textbox = textBoxes[new Point(i, j)];
 
+                                textbox.Location = new Point(ColumnsCoords[i], RowsCoords[j]);
                                 textbox.Width = table.ColumnsWidth[i];
                                 textbox.Height = table.RowsHeight[j];
-
-                                textbox.Text = table[i, j].data;
+                                textbox.Text = table[i, j].Data;
                                 textbox.BorderStyle = BorderStyle.Fixed3D;
-
                                 textbox.GotFocus += (s, a) =>
                                 {
                                     focusedCellCoords.Text = new Point(i, j).ToString();
@@ -243,39 +228,15 @@ namespace GUI
                                     currentTextBox = textbox;
                                     focusedCell.Text = textbox.Text;
                                 };
-                                textBoxes.Add(new Point(i, j), textbox);
-                                Controls.Add(textbox);
-                            }
-                            else
-                            {
-                                var textbox = textBoxes[new Point(i, j)];
-                                textbox.Location = new Point(ColumnsCoords[i], RowsCoords[j]);
-                                textbox.Width = table.ColumnsWidth[i];
-                                textbox.Height = table.RowsHeight[j];
 
-                                textbox.Text = table[i, j].data;
-                                textbox.BorderStyle = BorderStyle.Fixed3D;
-                                textbox.GotFocus += (s, a) =>
-                                {
-                                    focusedCellCoords.Text = new Point(i, j).ToString();
-                                    currentTextBox = textbox;
-                                    focusedCell.Text = textbox.Text;
-                                };
-                                textbox.TextChanged += (s, a) =>
-                                {
-                                    PushData(new Point(i,j),textbox.Text);                                 
-                                    currentTextBox = textbox;
-                                    focusedCell.Text = textbox.Text;
-                                };
                             }
-
+                            else break;
                         }
-                        else break;
+
+
                     }
-
-
+                    else break;
                 }
-                else break;
             }//);
         }
 
@@ -301,13 +262,13 @@ namespace GUI
         }
         void RemoveRow(int number)
         {
-            table.DeleteRow(number);
+            table.RemoveRow(number);
             ShowMaxCoords();
             DrawTable();
         }
         void RemoveColumn(int number)
         {
-            table.DeleteColumn(number);
+            table.RemoveColumn(number);
             ShowMaxCoords();
             DrawTable();
         }
