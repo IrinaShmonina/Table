@@ -18,8 +18,8 @@ namespace GUI
         private TextBox focusedCell;
         private TextBox focusedCellCoords;
         private TextBox currentTextBox;
-        private TextBox AAA;
-        private TextBox BBB;
+        private TextBox MaxXCoord;
+        private TextBox MaxYCoord;
         
         //private TableLayoutPanel tab;
         private Dictionary<Point, TextBox> textBoxes;
@@ -82,17 +82,17 @@ namespace GUI
             focusedCellCoords.Enabled = false;
             Controls.Add(focusedCellCoords);
 
-            AAA = new TextBox();
-            AAA.Location = new Point(600, 40);
-            AAA.Size = new Size(30, 30);
-            AAA.Text = table.MaxChangedColumn.ToString();
-            Controls.Add(AAA);
+            MaxXCoord = new TextBox();
+            MaxXCoord.Location = new Point(600, 40);
+            MaxXCoord.Size = new Size(30, 30);
+            MaxXCoord.Text = table.MaxChangedColumn.ToString();
+            Controls.Add(MaxXCoord);
 
-            BBB = new TextBox();
-            BBB.Location = new Point(630, 40);
-            BBB.Size = new Size(30, 30);
-            BBB.Text = table.MaxChangedRow.ToString();
-            Controls.Add(BBB);
+            MaxYCoord = new TextBox();
+            MaxYCoord.Location = new Point(630, 40);
+            MaxYCoord.Size = new Size(30, 30);
+            MaxYCoord.Text = table.MaxChangedRow.ToString();
+            Controls.Add(MaxYCoord);
 
 
 
@@ -110,10 +110,10 @@ namespace GUI
 
                 };
         }
-        void RRR()
+        void ShowMaxCoords()
         {
-            AAA.Text = table.MaxChangedColumn.ToString();
-            BBB.Text = table.MaxChangedRow.ToString();
+            MaxXCoord.Text = table.MaxChangedColumn.ToString();
+            MaxYCoord.Text = table.MaxChangedRow.ToString();
         }
         void DrawTable()
         {
@@ -239,11 +239,9 @@ namespace GUI
                                 };
                                 textbox.TextChanged += (s, a) =>
                                 {
-                                    table.PushData(new Point(i, j), textbox.Text);
-                                    RRR();
+                                    PushData(new Point(i, j), textbox.Text);
                                     currentTextBox = textbox;
                                     focusedCell.Text = textbox.Text;
-                                    DrawTable();
                                 };
                                 textBoxes.Add(new Point(i, j), textbox);
                                 Controls.Add(textbox);
@@ -265,16 +263,9 @@ namespace GUI
                                 };
                                 textbox.TextChanged += (s, a) =>
                                 {
-                                    
-                                    table.PushData(new Point(i,j),textbox.Text);
-                                    RRR();
+                                    PushData(new Point(i,j),textbox.Text);                                 
                                     currentTextBox = textbox;
                                     focusedCell.Text = textbox.Text;
-                                    DrawTable();
-
-                                    //if (x > table.MaxChangedColumn) table.MaxChangedColumn = x;
-                                    //if (y == table.MaxChangedRow) table.MaxChangedRow = y;
-                                    //table.NeedResize();
                                 };
                             }
 
@@ -288,41 +279,48 @@ namespace GUI
             }//);
         }
 
-
+        void PushData(Point point, string text)
+        {
+            var needReDraw = false;
+            if (point.X == table.TableWidth || point.Y == table.TableHeight) needReDraw = true;
+            table.PushData(point, text);
+            ShowMaxCoords();
+            if (needReDraw) DrawTable();            
+        }
         void InsertRow(int number)
         {
             table.InsertRow(number);
-            RRR();
+            ShowMaxCoords();
             DrawTable();
         }
         void InsertColumn(int number)
         {
             table.InsertColumn(number);
-            RRR();
+            ShowMaxCoords();
             DrawTable();
         }
         void RemoveRow(int number)
         {
             table.DeleteRow(number);
-            RRR();
+            ShowMaxCoords();
             DrawTable();
         }
         void RemoveColumn(int number)
         {
             table.DeleteColumn(number);
-            RRR();
+            ShowMaxCoords();
             DrawTable();
         }
         void ChangeRowHeight(int number)
         {
             table.ChangeRowHeight(number, 30);
-            RRR();
+            ShowMaxCoords();
             DrawTable();
         }
         void ChangeColumnWidth(int number)
         {
             table.ChangeColumnWidth(number, 30);
-            RRR();
+            ShowMaxCoords();
             DrawTable();
         }
 

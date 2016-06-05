@@ -62,9 +62,22 @@ namespace App
         }
         public void NeedResize()
         {
-            if (MaxChangedColumn == TableWidth && MaxChangedRow == TableHeight) Resize(1, 0);
-            else if (MaxChangedColumn == TableWidth) Resize(1, 0);
-            else if (MaxChangedRow == TableHeight) Resize(0, 1);
+            if (MaxChangedColumn == TableWidth && MaxChangedRow == TableHeight)
+            {
+                Resize(1, 0);
+                //return true;
+            }
+            else if (MaxChangedColumn == TableWidth)
+            {
+                Resize(1, 0);
+                //return true;
+            }
+            else if (MaxChangedRow == TableHeight)
+            {
+                Resize(0, 1);
+                //return true;
+            }
+            //else return false;
         }
 
         public void ChangeColumnWidth(int number, int width)
