@@ -9,13 +9,19 @@ namespace App
 {
     public class Table : ITable
     {
-        public int TableWidth { get; private set; }
-        public int TableHeight {get; private set;}
-        public int MaxChangedColumn {get; private set;}
-        public int MaxChangedRow {get; private set;}
-        public readonly Dictionary<Point, Cell> table;
-        public readonly Dictionary<int, int> RowsHeight;
-        public readonly Dictionary<int, int> ColumnsWidth;
+        //public int TableWidth { get; private set; }
+        //public int TableHeight { get; private set; }
+        //public int MaxChangedColumn { get; private set; }
+        //public int MaxChangedRow { get; private set; }
+        public int TableWidth { get; set; }
+        public int TableHeight { get; set; }
+        public int MaxChangedColumn { get; set; }
+        public int MaxChangedRow { get; set; }
+
+        private Dictionary<Point, Cell> table;
+        private Dictionary<int, int> RowsHeight;
+        private Dictionary<int, int> ColumnsWidth;
+        
 
         public Table()
         {
@@ -51,7 +57,7 @@ namespace App
                 table[new Point(number, i)].SetNewSize(width, RowsHeight[i]);
 
             if (number > MaxChangedColumn) MaxChangedColumn = number;
-            NeedResize();
+            Resize();
         }
 
         public void ChangeRowHeight(int number, int heigth)
@@ -61,7 +67,17 @@ namespace App
                 table[new Point(i, number)].SetNewSize(ColumnsWidth[i], heigth);
 
             if (number > MaxChangedRow) MaxChangedRow = number;
-            NeedResize();
+            Resize();
+        }
+
+        public int GetRowHeight(int number)
+        {
+            return RowsHeight[number];
+        }
+
+        public int GetColumnWidth(int number)
+        {
+            return ColumnsWidth[number];
         }
 
         public void IncreaseColumnsCount(int number)
@@ -71,7 +87,7 @@ namespace App
             ColumnsWidth[number] = Cell.defaultWidth;
 
             if (number <= MaxChangedColumn) MaxChangedColumn++;
-            NeedResize();
+            Resize();
         }
 
         public void IncreaseRowsCount(int number)
@@ -81,9 +97,9 @@ namespace App
             RowsHeight[number] = Cell.defaultHeight;
 
             if (number <= MaxChangedRow) MaxChangedRow++;
-            NeedResize();
+            Resize();
         }
-        
+
         public void DecreaseColumnsCount(int number)
         {
             for (int i = number; i < TableWidth; i++)
@@ -91,7 +107,7 @@ namespace App
             ColumnsWidth[TableWidth] = Cell.defaultWidth;
 
             if (number <= MaxChangedColumn) MaxChangedColumn--;
-            NeedResize();
+            Resize();
         }
 
         public void DecreaseRowsCount(int number)
@@ -101,13 +117,13 @@ namespace App
             RowsHeight[TableHeight] = Cell.defaultHeight;
 
             if (number <= MaxChangedRow) MaxChangedRow--;
-            NeedResize();
+            Resize();
         }
 
-        public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInPixel, int yShiftInCells)
+        public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInPixels, int yShiftInCells)
         {
             var result = new Dictionary<int, int>();
-            var yCoord = yShiftInPixel;
+            var yCoord = yShiftInPixels;
             for (int i = yShiftInCells + 1; i <= RowsHeight.Count; i++)
             {
                 result.Add(i, yCoord);
@@ -116,17 +132,17 @@ namespace App
             return result;
         }
 
-        public Dictionary<int, int> GetShiftedColumnsCoords(int xShiftInPixel, int xShiftInCells)
+        public Dictionary<int, int> GetShiftedColumnsCoords(int xShiftInPixels, int xShiftInCells)
         {
             var result = new Dictionary<int, int>();
-            var xCoord = xShiftInPixel;
+            var xCoord = xShiftInPixels;
             for (int i = xShiftInCells + 1; i <= ColumnsWidth.Count; i++)
             {
                 result.Add(i, xCoord);
                 xCoord += ColumnsWidth[i];
             }
             return result;
-        }        
+        }
 
         public Cell this[int x, int y]
         {
@@ -137,7 +153,7 @@ namespace App
             set
             {
                 table[new Point(x, y)] = value;
-                table[new Point(x, y)].SetNewCoords(x,y);
+                table[new Point(x, y)].SetNewCoords(x, y);
             }
         }
         public Cell this[Point point]
@@ -149,74 +165,80 @@ namespace App
             set
             {
                 table[point] = value;
-                table[point].SetNewCoords(point.X,point.Y);
+                table[point].SetNewCoords(point.X, point.Y);
             }
         }
 
         public void InsertRow(int rowIndex)
         {
-            if (rowIndex < TableHeight)
-            {
-                IncreaseRowsCount(rowIndex);
+            if (rowIndex <= MaxChangedRow)
+            {                
                 for (int r = TableHeight - 1; r >= rowIndex; r--)
                     for (int c = 1; c <= TableWidth; c++)
-                            this[c, r + 1] = this[c, r];
+                        this[c, r + 1] = this[c, r];
 
                 for (int c = 1; c <= TableWidth; c++)
-                    table[new Point(c, rowIndex)] = new Cell(c,rowIndex);
+                    table[new Point(c, rowIndex)] = new Cell(c, rowIndex);
+
+                IncreaseRowsCount(rowIndex);
             }
+
         }
 
         public void InsertColumn(int columnIndex)
         {
-            if (columnIndex < TableWidth)
+            if (columnIndex <= MaxChangedColumn)
             {
-                IncreaseColumnsCount(columnIndex);
                 for (int c = TableWidth - 1; c >= columnIndex; c--)
                     for (int r = 1; r <= TableHeight; r++)
-                            this[c + 1, r] = this[c, r];
+                        this[c + 1, r] = this[c, r];
 
                 for (int r = 1; r <= TableHeight; r++)
-                    table[new Point(columnIndex, r)] = new Cell(columnIndex,r);
+                    table[new Point(columnIndex, r)] = new Cell(columnIndex, r);
+
+                IncreaseColumnsCount(columnIndex);
             }
         }
 
         public void RemoveRow(int rowIndex)
         {
-            if (rowIndex <= TableHeight)
-            {
-                DecreaseRowsCount(rowIndex);
+            if (rowIndex <= MaxChangedRow)
+            {                
                 for (int r = rowIndex; r < TableHeight; r++)
                     for (int c = 1; c <= TableWidth; c++)
-                            this[c, r] = this[c, r + 1];
+                        this[c, r] = this[c, r + 1];
 
                 for (int c = 1; c <= TableWidth; c++)
                     table[new Point(c, TableHeight)] = new Cell(c, TableHeight);
+
+                DecreaseRowsCount(rowIndex);
             }
         }
 
         public void RemoveColumn(int columnIndex)
         {
-            if (columnIndex < TableWidth)
+            if (columnIndex <= MaxChangedColumn)
             {
-                DecreaseColumnsCount(columnIndex);
                 for (int c = columnIndex; c < TableWidth; c++)
                     for (int r = 1; r <= TableHeight; r++)
-                            this[c, r] = this[c + 1, r];
+                        this[c, r] = this[c + 1, r];
+
                 for (int r = 1; r <= TableHeight; r++)
-                    table[new Point(TableWidth, r)] = new Cell(TableWidth,r);
+                    table[new Point(TableWidth, r)] = new Cell(TableWidth, r);
+
+                DecreaseColumnsCount(columnIndex);
             }
         }
         public void PushData(Point point, string data)
         {
-            
+
             table[point].PushData(data);
             if (point.X >= MaxChangedColumn) MaxChangedColumn = point.X;
             if (point.Y >= MaxChangedRow) MaxChangedRow = point.Y;
-            NeedResize();
+            Resize();
         }
 
-        public void NeedResize()
+        public void Resize()
         {
             if (MaxChangedColumn == TableWidth && MaxChangedRow == TableHeight)
                 Resize(1, 0);
@@ -224,6 +246,8 @@ namespace App
                 Resize(1, 0);
             else if (MaxChangedRow == TableHeight)
                 Resize(0, 1);
+            else return;
+
         }
 
         public void Resize(int deltaX, int deltaY)
@@ -244,5 +268,7 @@ namespace App
             for (int i = oldTableHeight + 1; i <= TableHeight; i++)
                 RowsHeight.Add(i, Cell.defaultHeight);
         }
+
+        
     }
 }

@@ -14,7 +14,7 @@ namespace GUI
     class AppForm : Form
     {
         private Size currentShift;
-        private Table table;
+        private ITable table;
         private MenuStrip mainMenu;
         private TextBox focusedCell;
         private TextBox focusedCellCoords;
@@ -35,7 +35,7 @@ namespace GUI
         private int maxX;
         private int maxY;
 
-        public AppForm(Table table)
+        public AppForm(ITable table)
         {
             currentShift = new Size(0, 0);
             //System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;
@@ -44,9 +44,8 @@ namespace GUI
             this.MinimumSize = new Size(800, 600);
             //this.AutoSize = true;
             this.WindowState = FormWindowState.Maximized;
-            this.SizeChanged += (sender, args) => { DrawTable(); };//DrawTable();
+            //this.SizeChanged += (sender, args) => { DrawTable(); };//DrawTable();
             this.Resize += (sender, args) => { DrawTable(); };
-            //this.AutoScroll = true;
             //this.BorderStyle = BorderStyle.FixedSingle;
             DoubleBuffered = true;
 
@@ -172,7 +171,7 @@ namespace GUI
             for (int x = 1; x <= table.TableWidth; x++)
             {
                 var i = x;
-                if (ColumnsCoords[currentShift.Width + i] + table.ColumnsWidth[currentShift.Width + i] < this.Right - 50)
+                if (ColumnsCoords[currentShift.Width + i] + table.GetColumnWidth(currentShift.Width + i) < this.Right - 50)
                 {
                     maxX++;
                     var contextMenu = new ContextMenuStrip();
@@ -192,7 +191,7 @@ namespace GUI
                     label = labels[new Point(i, 0)];
 
                     label.Location = new Point(ColumnsCoords[currentShift.Width + i], LeftTopY_Pixel - 20);
-                    label.Size = new Size(table.ColumnsWidth[currentShift.Width + i], 20);
+                    label.Size = new Size(table.GetColumnWidth(currentShift.Width + i), 20);
                     label.Text = (currentShift.Width + i).ToString();
                     label.BorderStyle = BorderStyle.Fixed3D;
                     label.TextAlign = ContentAlignment.MiddleCenter;
@@ -211,7 +210,7 @@ namespace GUI
             for (int y = 1; y <= table.TableHeight; y++)
             {
                 var j = y;
-                if (RowsCoords[currentShift.Height + j] + table.RowsHeight[currentShift.Height + j] < this.Bottom - 50)
+                if (RowsCoords[currentShift.Height + j] + table.GetRowHeight(currentShift.Height + j) < this.Bottom - 50)
                 {
                     maxY++;
                     var contextMenu = new ContextMenuStrip();
@@ -231,7 +230,7 @@ namespace GUI
                     label = labels[new Point(0, j)];
 
                     label.Location = new Point(LeftTopX_Pixel - 50, RowsCoords[currentShift.Height + j]);
-                    label.Size = new Size(50, table.RowsHeight[currentShift.Height + j]);
+                    label.Size = new Size(50, table.GetRowHeight(currentShift.Height + j));
                     label.Text = (currentShift.Height + j).ToString();
                     label.TextAlign = ContentAlignment.MiddleCenter;
                     label.BorderStyle = BorderStyle.Fixed3D;
@@ -266,8 +265,8 @@ namespace GUI
 
                     textbox = textBoxes[new Point(i, j)];
                     textbox.Location = new Point(ColumnsCoords[currentShift.Width + i], RowsCoords[currentShift.Height + j]);
-                    textbox.Width = table.ColumnsWidth[currentShift.Width + i];
-                    textbox.Height = table.RowsHeight[currentShift.Height + j];
+                    textbox.Width = table.GetColumnWidth(currentShift.Width + i);
+                    textbox.Height = table.GetRowHeight(currentShift.Height + j);
                     ////
                     textbox.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
 
