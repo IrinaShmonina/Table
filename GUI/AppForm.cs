@@ -28,8 +28,12 @@ namespace GUI
         private Dictionary<Point, Label> labels;
         public Dictionary<int, int> RowsCoords;
         public Dictionary<int, int> ColumnsCoords;
-        const int xShiftInPixel = 30;
-        const int yShiftInPixel = 100;
+
+        const int LeftTopX_Pixel = 50;
+        const int LeftTopY_Pixel = 100;
+
+        private int maxX;
+        private int maxY;
 
         public AppForm(Table table)
         {
@@ -108,6 +112,8 @@ namespace GUI
             vScroller.Scroll += (sender, args) =>
                 {
                     currentShift.Height = vScroller.Value;
+                    if (vScroller.Value > 0.9 * vScroller.Maximum)
+                        table.Resize(0, 1);
                     //MaxYCoord.Text = currentShift.Height.ToString();
                     //MaxXCoord.Text = vScroller.Maximum.ToString();
                     DrawTable();
@@ -124,6 +130,8 @@ namespace GUI
             hScroller.Scroll += (sender, args) =>
                 {
                     currentShift.Width = hScroller.Value;
+                    if (hScroller.Value > 0.9 * hScroller.Maximum)
+                        table.Resize(1,0);
                     //MaxXCoord.Text = currentShift.Width.ToString();
                     //MaxYCoord.Text = hScroller.Maximum.ToString();
                     DrawTable();
@@ -156,16 +164,11 @@ namespace GUI
         }
         void DrawTable()
         {
-            //foreach (var e in labels.Values)
-            //{
-            //    Controls.Remove(e);
-            //}
-            //CellsCoords = table.GetShiftedCellsCoords(startXcoord, startYcoord);
-            ColumnsCoords = table.GetShiftedColumnsCoords(xShiftInPixel, currentShift.Width);
-            RowsCoords = table.GetShiftedRowsCoords(yShiftInPixel, currentShift.Height);
+            ColumnsCoords = table.GetShiftedColumnsCoords(LeftTopX_Pixel, currentShift.Width);
+            RowsCoords = table.GetShiftedRowsCoords(LeftTopY_Pixel, currentShift.Height);
 
-            var maxX = 0;//shift.Width;
-            var maxY = 0;// shift.Height;
+            maxX = 0;//shift.Width;
+            maxY = 0;// shift.Height;
             for (int x = 1; x <= table.TableWidth; x++)
             {
                 var i = x;
@@ -188,7 +191,7 @@ namespace GUI
 
                     label = labels[new Point(i, 0)];
 
-                    label.Location = new Point(ColumnsCoords[currentShift.Width + i], yShiftInPixel - 20);
+                    label.Location = new Point(ColumnsCoords[currentShift.Width + i], LeftTopY_Pixel - 20);
                     label.Size = new Size(table.ColumnsWidth[currentShift.Width + i], 20);
                     label.Text = (currentShift.Width + i).ToString();
                     label.BorderStyle = BorderStyle.Fixed3D;
@@ -227,8 +230,8 @@ namespace GUI
 
                     label = labels[new Point(0, j)];
 
-                    label.Location = new Point(xShiftInPixel - 30, RowsCoords[currentShift.Height + j]);
-                    label.Size = new Size(30, table.RowsHeight[currentShift.Height + j]);
+                    label.Location = new Point(LeftTopX_Pixel - 50, RowsCoords[currentShift.Height + j]);
+                    label.Size = new Size(50, table.RowsHeight[currentShift.Height + j]);
                     label.Text = (currentShift.Height + j).ToString();
                     label.TextAlign = ContentAlignment.MiddleCenter;
                     label.BorderStyle = BorderStyle.Fixed3D;
@@ -244,9 +247,6 @@ namespace GUI
 
             vScroller.Maximum = table.TableHeight - maxY;
             hScroller.Maximum = table.TableWidth - maxX;
-
-            //MaxXCoord.Text = hScroller.Maximum.ToString();
-            //MaxYCoord.Text = vScroller.Maximum.ToString();
 
             for (int x = 1; x <= maxX; x++)//table.TableWidth
             {
