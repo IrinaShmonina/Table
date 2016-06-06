@@ -107,14 +107,12 @@ namespace GUI
             vScroller.Width = 20;
             vScroller.Height = 200;
             vScroller.Minimum = 0;
-            vScroller.Maximum = table.TableHeight;
+            vScroller.Maximum = table.RowsCount;
             vScroller.Scroll += (sender, args) =>
                 {
                     currentShift.Height = vScroller.Value;
-                    if (vScroller.Value > 0.9 * vScroller.Maximum)
-                        table.Resize(0, 1);
-                    //MaxYCoord.Text = currentShift.Height.ToString();
-                    //MaxXCoord.Text = vScroller.Maximum.ToString();
+                    if (vScroller.Value > vScroller.Maximum-10)
+                        table.Resize(0, 0.5);
                     DrawTable();
 
                 };
@@ -125,14 +123,12 @@ namespace GUI
             hScroller.Width = 200;
             hScroller.Height = 20;
             hScroller.Minimum = 0;
-            hScroller.Maximum = table.TableWidth;
+            hScroller.Maximum = table.ColumnsCount;
             hScroller.Scroll += (sender, args) =>
                 {
                     currentShift.Width = hScroller.Value;
-                    if (hScroller.Value > 0.9 * hScroller.Maximum)
-                        table.Resize(1,0);
-                    //MaxXCoord.Text = currentShift.Width.ToString();
-                    //MaxYCoord.Text = hScroller.Maximum.ToString();
+                    if (hScroller.Value > hScroller.Maximum-10)
+                        table.Resize(0.5, 0);
                     DrawTable();
                 };
             Controls.Add(hScroller);
@@ -168,17 +164,20 @@ namespace GUI
 
             maxX = 0;//shift.Width;
             maxY = 0;// shift.Height;
-            for (int x = 1; x <= table.TableWidth; x++)
+            for (int x = 1; x <= table.ColumnsCount; x++)
             {
                 var i = x;
-                if (ColumnsCoords[currentShift.Width + i] + table.GetColumnWidth(currentShift.Width + i) < this.Right - 50)
+                if (ColumnsCoords[currentShift.Width + i] + Cell.Width < this.Right - 50)
                 {
                     maxX++;
                     var contextMenu = new ContextMenuStrip();
-                    ToolStripMenuItem insertColumn = new ToolStripMenuItem("Вставить столбец", null, (s, a) => { InsertColumn(currentShift.Width + i); });
+                    ToolStripMenuItem addColumn = new ToolStripMenuItem("Добавить столбец", null, (s, a) => { AddColumn(currentShift.Width + i); });
                     ToolStripMenuItem removeColumn = new ToolStripMenuItem("Удалить столбец", null, (s, a) => { RemoveColumn(currentShift.Width + i); });
-                    ToolStripMenuItem changeColumnWidth = new ToolStripMenuItem("Изменить ширину столбца", null, (s, a) => { ChangeColumnWidth(currentShift.Width + i); });
-                    contextMenu.Items.AddRange(new[] { insertColumn, removeColumn, changeColumnWidth });
+
+                    ToolStripMenuItem cutColumn = new ToolStripMenuItem("Вырезать столбец", null, (s, a) => { CutColumn(currentShift.Width + i); });
+                    ToolStripMenuItem copyColumn = new ToolStripMenuItem("Копировать столбец", null, (s, a) => { CopyColumn(currentShift.Width + i); });
+                    ToolStripMenuItem pastColumn = new ToolStripMenuItem("Вставить столбец", null, (s, a) => { PastColumn(currentShift.Width + i); });
+                    contextMenu.Items.AddRange(new[] { addColumn, removeColumn, cutColumn, copyColumn, pastColumn});
 
                     Label label;
                     if (!labels.ContainsKey(new Point(i, 0)))
@@ -191,7 +190,7 @@ namespace GUI
                     label = labels[new Point(i, 0)];
 
                     label.Location = new Point(ColumnsCoords[currentShift.Width + i], LeftTopY_Pixel - 20);
-                    label.Size = new Size(table.GetColumnWidth(currentShift.Width + i), 20);
+                    label.Size = new Size(Cell.Width, 20);
                     label.Text = (currentShift.Width + i).ToString();
                     label.BorderStyle = BorderStyle.Fixed3D;
                     label.TextAlign = ContentAlignment.MiddleCenter;
@@ -207,17 +206,20 @@ namespace GUI
             }
 
 
-            for (int y = 1; y <= table.TableHeight; y++)
+            for (int y = 1; y <= table.RowsCount; y++)
             {
                 var j = y;
-                if (RowsCoords[currentShift.Height + j] + table.GetRowHeight(currentShift.Height + j) < this.Bottom - 50)
+                if (RowsCoords[currentShift.Height + j] + Cell.Height < this.Bottom - 50)
                 {
                     maxY++;
                     var contextMenu = new ContextMenuStrip();
-                    ToolStripMenuItem insertRow = new ToolStripMenuItem("Вставить строку", null, (s, a) => { InsertRow(currentShift.Height + j); });
+                    ToolStripMenuItem addRow = new ToolStripMenuItem("Добавить строку", null, (s, a) => { AddRow(currentShift.Height + j); });
                     ToolStripMenuItem removeRow = new ToolStripMenuItem("Удалить строку", null, (s, a) => { RemoveRow(currentShift.Height + j); });
-                    ToolStripMenuItem changeRowHeight = new ToolStripMenuItem("Изменить высоту строки", null, (s, a) => { ChangeRowHeight(currentShift.Height + j); });
-                    contextMenu.Items.AddRange(new[] { insertRow, removeRow, changeRowHeight });
+
+                    ToolStripMenuItem cutRow = new ToolStripMenuItem("Вырезать строку", null, (s, a) => { CutRow(currentShift.Height + j); });
+                    ToolStripMenuItem copyRow = new ToolStripMenuItem("Копировать строку", null, (s, a) => { CopyRow(currentShift.Height + j); });
+                    ToolStripMenuItem pastRow = new ToolStripMenuItem("Вставить строку", null, (s, a) => { PastRow(currentShift.Height + j); });
+                    contextMenu.Items.AddRange(new[] { addRow, removeRow, cutRow, copyRow, pastRow });
 
                     Label label;
                     if (!labels.ContainsKey(new Point(0, j)))
@@ -230,7 +232,7 @@ namespace GUI
                     label = labels[new Point(0, j)];
 
                     label.Location = new Point(LeftTopX_Pixel - 50, RowsCoords[currentShift.Height + j]);
-                    label.Size = new Size(50, table.GetRowHeight(currentShift.Height + j));
+                    label.Size = new Size(50, Cell.Height);
                     label.Text = (currentShift.Height + j).ToString();
                     label.TextAlign = ContentAlignment.MiddleCenter;
                     label.BorderStyle = BorderStyle.Fixed3D;
@@ -244,8 +246,8 @@ namespace GUI
                 }
             }
 
-            vScroller.Maximum = table.TableHeight - maxY;
-            hScroller.Maximum = table.TableWidth - maxX;
+            vScroller.Maximum = table.RowsCount - maxY;
+            hScroller.Maximum = table.ColumnsCount - maxX;
 
             for (int x = 1; x <= maxX; x++)//table.TableWidth
             {
@@ -265,8 +267,8 @@ namespace GUI
 
                     textbox = textBoxes[new Point(i, j)];
                     textbox.Location = new Point(ColumnsCoords[currentShift.Width + i], RowsCoords[currentShift.Height + j]);
-                    textbox.Width = table.GetColumnWidth(currentShift.Width + i);
-                    textbox.Height = table.GetRowHeight(currentShift.Height + j);
+                    textbox.Width = Cell.Width;
+                    textbox.Height = Cell.Height;
                     ////
                     textbox.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
 
@@ -284,38 +286,38 @@ namespace GUI
                     };
                 }
             }
-            for (int x = maxX + 1; x <= table.TableWidth; x++)
-            {
-                var i = x;
-                if (labels.ContainsKey(new Point(i, 0)))
-                    for (int y = maxY + 1; y <= table.TableHeight; y++)
-                    {
-                        var j = y;
-                        if (textBoxes.ContainsKey(new Point(i, j)))
-                            textBoxes.Remove(new Point(i, j));
-                        else break;
-                    }
-                else break;
-            }
+            //for (int x = maxX + 1; x <= table.TableWidth; x++)
+            //{
+            //    var i = x;
+            //    if (labels.ContainsKey(new Point(i, 0)))
+            //        for (int y = maxY + 1; y <= table.TableHeight; y++)
+            //        {
+            //            var j = y;
+            //            if (textBoxes.ContainsKey(new Point(i, j)))
+            //                textBoxes.Remove(new Point(i, j));
+            //            else break;
+            //        }
+            //    else break;
+            //}
         }
 
         void PushData(Point point, string text)
         {
             var needReDraw = false;
-            if (point.X == table.TableWidth || point.Y == table.TableHeight) needReDraw = true;
+            if (point.X == table.ColumnsCount || point.Y == table.RowsCount) needReDraw = true;
             table.PushData(point, text);
             ShowMaxCoords();
             if (needReDraw) DrawTable();
         }
-        void InsertRow(int number)
+        void AddRow(int number)
         {
-            table.InsertRow(number);
+            table.AddRow(number);
             ShowMaxCoords();
             DrawTable();
         }
-        void InsertColumn(int number)
+        void AddColumn(int number)
         {
-            table.InsertColumn(number);
+            table.AddColumn(number);
             ShowMaxCoords();
             DrawTable();
         }
@@ -331,163 +333,45 @@ namespace GUI
             ShowMaxCoords();
             DrawTable();
         }
-        void ChangeRowHeight(int number)
+
+        void CutRow(int number)
         {
-            table.ChangeRowHeight(number, 40);
+            table.CutRow(number);
             ShowMaxCoords();
             DrawTable();
         }
-        void ChangeColumnWidth(int number)
+        void CutColumn(int number)
         {
-            table.ChangeColumnWidth(number, 60);
+            table.CutColumn(number);
             ShowMaxCoords();
             DrawTable();
         }
 
-    }
-    //void DrawTable(Size shift)
-    //    {
-    //        //foreach (var e in labels.Values)
-    //        //{
-    //        //    Controls.Remove(e);
-    //        //}
-    //        //CellsCoords = table.GetShiftedCellsCoords(startXcoord, startYcoord);
-    //        RowsCoords = table.GetShiftedRowsCoords(startYcoord);
-    //        ColumnsCoords = table.GetShiftedColumnsCoords(startXcoord);
-    //        var maxX = 0;
-    //        var maxY = 0;
-    //        for (int x = 1; x <= table.TableWidth; x++)
-    //        {
-    //            var i = x;
-    //            if (ColumnsCoords[i] + table.ColumnsWidth[i] < this.Right - 50)
-    //            {
-    //                maxX++;
-    //                var contextMenu = new ContextMenuStrip();
-    //                ToolStripMenuItem insertColumn = new ToolStripMenuItem("Вставить столбец", null, (s, a) => { InsertColumn(i); });
-    //                ToolStripMenuItem removeColumn = new ToolStripMenuItem("Удалить столбец", null, (s, a) => { RemoveColumn(i); });
-    //                ToolStripMenuItem changeColumnWidth = new ToolStripMenuItem("Изменить ширину столбца", null, (s, a) => { ChangeColumnWidth(i); });
-    //                contextMenu.Items.AddRange(new[] { insertColumn, removeColumn, changeColumnWidth });
+        void CopyRow(int number)
+        {
+            table.CopyRow(number);
+            ShowMaxCoords();
+            DrawTable();
+        }
+        void CopyColumn(int number)
+        {
+            table.CopyColumn(number);
+            ShowMaxCoords();
+            DrawTable();
+        }
 
-    //                Label label;
-    //                if (!labels.ContainsKey(new Point(i, 0)))
-    //                {
-    //                    label = new Label();
-    //                    labels.Add(new Point(i, 0), label);
-    //                    Controls.Add(label);
-    //                }
+        void PastRow(int number)
+        {
+            table.PastRow(number);
+            ShowMaxCoords();
+            DrawTable();
+        }
+        void PastColumn(int number)
+        {
+            table.PastColumn(number);
+            ShowMaxCoords();
+            DrawTable();
+        }
 
-    //                label = labels[new Point(i, 0)];
-
-    //                label.Location = new Point(ColumnsCoords[i], startYcoord - 20);
-    //                label.Size = new Size(table.ColumnsWidth[i], 20);
-    //                label.Text = i.ToString();
-    //                label.BorderStyle = BorderStyle.Fixed3D;
-    //                label.TextAlign = ContentAlignment.MiddleCenter;
-    //                label.ContextMenuStrip = contextMenu;
-    //            }
-    //            else
-    //            {
-    //                if (labels.ContainsKey(new Point(i, 0)))
-    //                    labels.Remove(new Point(i, 0));
-    //                else
-    //                    break;
-    //            }
-    //        }
-
-
-    //        for (int y = 1; y <= table.TableHeight; y++)
-    //        {
-    //            var j = y;
-    //            if (RowsCoords[j] + table.RowsHeight[j] < this.Bottom - 50)
-    //            {
-    //                maxY++;
-    //                var contextMenu = new ContextMenuStrip();
-    //                ToolStripMenuItem insertRow = new ToolStripMenuItem("Вставить строку", null, (s, a) => { InsertRow(j); });
-    //                ToolStripMenuItem removeRow = new ToolStripMenuItem("Удалить строку", null, (s, a) => { RemoveRow(j); });
-    //                ToolStripMenuItem changeRowHeight = new ToolStripMenuItem("Изменить высоту строки", null, (s, a) => { ChangeRowHeight(j); });
-    //                contextMenu.Items.AddRange(new[] { insertRow, removeRow, changeRowHeight });
-
-    //                Label label;
-    //                if (!labels.ContainsKey(new Point(0, j)))
-    //                {
-    //                    label = new Label();
-    //                    labels.Add(new Point(0, j), label);
-    //                    Controls.Add(label);
-    //                }
-
-    //                label = labels[new Point(0, j)];
-
-    //                label.Location = new Point(startXcoord - 30, RowsCoords[j]);
-    //                label.Size = new Size(30, table.RowsHeight[j]);
-    //                label.Text = j.ToString();
-    //                label.TextAlign = ContentAlignment.MiddleCenter;
-    //                label.BorderStyle = BorderStyle.Fixed3D;
-    //                label.ContextMenuStrip = contextMenu;
-    //            }
-    //            else
-    //            {
-    //                if (labels.ContainsKey(new Point(0, j)))
-    //                    labels.Remove(new Point(0, j));
-    //                else break;
-    //            }
-    //        }
-    //        for (int x = 1; x <= maxX; x++)//table.TableWidth
-    //        {
-    //            var i = x;
-    //            for (int y = 1; y <= maxY; y++)//table.TableHeight
-    //            {
-    //                var j = y;
-    //                //if (RowsCoords[j] + table.RowsHeight[j] < this.Bottom - 30 && ColumnsCoords[i] + table.ColumnsWidth[i] < this.Right - 30)
-    //                {
-    //                    TextBox textbox;
-    //                    if (!textBoxes.ContainsKey(new Point(i, j)))
-    //                    {
-    //                        textbox = new TextBox();
-    //                        textBoxes.Add(new Point(i, j), textbox);
-    //                        textbox.BorderStyle = BorderStyle.Fixed3D;
-    //                        Controls.Add(textbox);
-    //                    }
-
-    //                    textbox = textBoxes[new Point(i, j)];
-    //                    textbox.Location = new Point(ColumnsCoords[i], RowsCoords[j]);
-    //                    textbox.Width = table.ColumnsWidth[i];
-    //                    textbox.Height = table.RowsHeight[j];
-    //                    textbox.Text = table[i, j].Data;
-
-    //                    textbox.GotFocus += (s, a) =>
-    //                    {
-    //                        focusedCellCoords.Text = new Point(i, j).ToString();
-    //                        currentTextBox = textbox;
-    //                        focusedCell.Text = textbox.Text;
-    //                    };
-    //                    textbox.TextChanged += (s, a) =>
-    //                    {
-    //                        PushData(new Point(i, j), textbox.Text);
-    //                        currentTextBox = textbox;
-    //                        focusedCell.Text = textbox.Text;
-    //                    };
-    //                }
-    //                //else
-    //                //{
-    //                //    if (textBoxes.ContainsKey(new Point(i, j)))
-    //                //        textBoxes.Remove(new Point(i, j));
-    //                //    else 
-    //                //    break;
-    //                //}
-    //            }
-    //        }
-    //        for (int x = maxX + 1; x <= table.TableWidth; x++)
-    //        {
-    //            var i = x;
-    //            if (labels.ContainsKey(new Point(i, 0)))
-    //                for (int y = maxY + 1; y <= table.TableHeight; y++)
-    //                {
-    //                    var j = y;
-    //                    if (textBoxes.ContainsKey(new Point(i, j)))
-    //                        textBoxes.Remove(new Point(i, j));
-    //                    else break;
-    //                }
-    //            else break;
-    //        }
-    //    }
+    }    
 }

@@ -58,8 +58,8 @@ namespace App
                 }
                 Console.WriteLine("");
             }
-            table.InsertColumn(1);
-            table.InsertRow(1);
+            table.AddColumn(1);
+            table.AddRow(1);
             for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)
@@ -95,8 +95,8 @@ namespace App
                 }
                 Console.WriteLine("");
             }
-            table.InsertColumn(3);
-            table.InsertRow(3);
+            table.AddColumn(3);
+            table.AddRow(3);
             for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)
@@ -132,8 +132,8 @@ namespace App
                 }
                 Console.WriteLine("");
             }
-            table.InsertColumn(5);
-            table.InsertRow(5);
+            table.AddColumn(5);
+            table.AddRow(5);
             for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)

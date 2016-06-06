@@ -9,125 +9,45 @@ namespace App
 {
     public class Table : ITable
     {
-        //public int TableWidth { get; private set; }
-        //public int TableHeight { get; private set; }
-        //public int MaxChangedColumn { get; private set; }
-        //public int MaxChangedRow { get; private set; }
-        public int TableWidth { get; set; }
-        public int TableHeight { get; set; }
+        
+        public int ColumnsCount { get; set; }
+        public int RowsCount { get; set; }
         public int MaxChangedColumn { get; set; }
         public int MaxChangedRow { get; set; }
 
         private Dictionary<Point, Cell> table;
-        private Dictionary<int, int> RowsHeight;
-        private Dictionary<int, int> ColumnsWidth;
-        
+
+        public IBuffer buffer;
 
         public Table()
         {
-            TableWidth = 200;
-            TableHeight = 200;
+            
+            ColumnsCount = 200;
+            RowsCount = 200;
             MaxChangedColumn = 0;
             MaxChangedRow = 0;
 
             table = new Dictionary<Point, Cell>();
-            ColumnsWidth = new Dictionary<int, int>();
-            RowsHeight = new Dictionary<int, int>();
 
-            for (int x = 1; x <= TableWidth; x++) // инициализация словаря
+            for (int x = 1; x <= ColumnsCount; x++) // инициализация словаря
             {
-                for (int y = 1; y <= TableHeight; y++)
+                for (int y = 1; y <= RowsCount; y++)
                 {
                     table.Add(new Point(x, y), new Cell(x, y));
                 }
             }
 
-            for (int i = 1; i <= TableWidth; i++)
-                ColumnsWidth.Add(i, Cell.defaultWidth);
-
-            for (int i = 1; i <= TableHeight; i++)
-                RowsHeight.Add(i, Cell.defaultHeight);
-
-        }
-
-        public void ChangeColumnWidth(int number, int width)
-        {
-            ColumnsWidth[number] = width;
-            for (int i = 1; i <= TableHeight; i++)
-                table[new Point(number, i)].SetNewSize(width, RowsHeight[i]);
-
-            if (number > MaxChangedColumn) MaxChangedColumn = number;
-            Resize();
-        }
-
-        public void ChangeRowHeight(int number, int heigth)
-        {
-            RowsHeight[number] = heigth;
-            for (int i = 1; i <= TableWidth; i++)
-                table[new Point(i, number)].SetNewSize(ColumnsWidth[i], heigth);
-
-            if (number > MaxChangedRow) MaxChangedRow = number;
-            Resize();
-        }
-
-        public int GetRowHeight(int number)
-        {
-            return RowsHeight[number];
-        }
-
-        public int GetColumnWidth(int number)
-        {
-            return ColumnsWidth[number];
-        }
-
-        public void IncreaseColumnsCount(int number)
-        {
-            for (int i = TableWidth - 1; i >= number; i--)
-                ColumnsWidth[i + 1] = ColumnsWidth[i];
-            ColumnsWidth[number] = Cell.defaultWidth;
-
-            if (number <= MaxChangedColumn) MaxChangedColumn++;
-            Resize();
-        }
-
-        public void IncreaseRowsCount(int number)
-        {
-            for (int i = TableHeight - 1; i >= number; i--)
-                RowsHeight[i + 1] = RowsHeight[i];
-            RowsHeight[number] = Cell.defaultHeight;
-
-            if (number <= MaxChangedRow) MaxChangedRow++;
-            Resize();
-        }
-
-        public void DecreaseColumnsCount(int number)
-        {
-            for (int i = number; i < TableWidth; i++)
-                ColumnsWidth[i] = ColumnsWidth[i + 1];
-            ColumnsWidth[TableWidth] = Cell.defaultWidth;
-
-            if (number <= MaxChangedColumn) MaxChangedColumn--;
-            Resize();
-        }
-
-        public void DecreaseRowsCount(int number)
-        {
-            for (int i = number; i < TableHeight; i++)
-                RowsHeight[i] = RowsHeight[i + 1];
-            RowsHeight[TableHeight] = Cell.defaultHeight;
-
-            if (number <= MaxChangedRow) MaxChangedRow--;
-            Resize();
+            buffer = new Buffer();
         }
 
         public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInPixels, int yShiftInCells)
         {
             var result = new Dictionary<int, int>();
             var yCoord = yShiftInPixels;
-            for (int i = yShiftInCells + 1; i <= RowsHeight.Count; i++)
+            for (int i = yShiftInCells + 1; i <= RowsCount; i++)
             {
                 result.Add(i, yCoord);
-                yCoord += RowsHeight[i];
+                yCoord += Cell.Height;
             }
             return result;
         }
@@ -136,10 +56,10 @@ namespace App
         {
             var result = new Dictionary<int, int>();
             var xCoord = xShiftInPixels;
-            for (int i = xShiftInCells + 1; i <= ColumnsWidth.Count; i++)
+            for (int i = xShiftInCells + 1; i <= ColumnsCount; i++)
             {
                 result.Add(i, xCoord);
-                xCoord += ColumnsWidth[i];
+                xCoord += Cell.Width;
             }
             return result;
         }
@@ -169,65 +89,69 @@ namespace App
             }
         }
 
-        public void InsertRow(int rowIndex)
+        public void AddRow(int rowIndex)
         {
-            if (rowIndex <= MaxChangedRow)
-            {                
-                for (int r = TableHeight - 1; r >= rowIndex; r--)
-                    for (int c = 1; c <= TableWidth; c++)
+            //if (rowIndex <= MaxChangedRow)
+            //{                
+                for (int r = RowsCount - 1; r >= rowIndex; r--)
+                    for (int c = 1; c <= ColumnsCount; c++)
                         this[c, r + 1] = this[c, r];
 
-                for (int c = 1; c <= TableWidth; c++)
+                for (int c = 1; c <= ColumnsCount; c++)
                     table[new Point(c, rowIndex)] = new Cell(c, rowIndex);
 
-                IncreaseRowsCount(rowIndex);
-            }
+                if (rowIndex <= MaxChangedRow) MaxChangedRow++;
+                Resize();
+            //}
 
         }
 
-        public void InsertColumn(int columnIndex)
+        public void AddColumn(int columnIndex)
         {
-            if (columnIndex <= MaxChangedColumn)
-            {
-                for (int c = TableWidth - 1; c >= columnIndex; c--)
-                    for (int r = 1; r <= TableHeight; r++)
+            //if (columnIndex <= MaxChangedColumn)
+            //{
+                for (int c = ColumnsCount - 1; c >= columnIndex; c--)
+                    for (int r = 1; r <= RowsCount; r++)
                         this[c + 1, r] = this[c, r];
 
-                for (int r = 1; r <= TableHeight; r++)
+                for (int r = 1; r <= RowsCount; r++)
                     table[new Point(columnIndex, r)] = new Cell(columnIndex, r);
 
-                IncreaseColumnsCount(columnIndex);
-            }
+                if (columnIndex <= MaxChangedColumn) MaxChangedColumn++;
+                Resize();
+            //}
         }
 
         public void RemoveRow(int rowIndex)
         {
-            if (rowIndex <= MaxChangedRow)
-            {                
-                for (int r = rowIndex; r < TableHeight; r++)
-                    for (int c = 1; c <= TableWidth; c++)
+            //if (rowIndex <= MaxChangedRow)
+            //{                
+                for (int r = rowIndex; r < RowsCount; r++)
+                    for (int c = 1; c <= ColumnsCount; c++)
                         this[c, r] = this[c, r + 1];
 
-                for (int c = 1; c <= TableWidth; c++)
-                    table[new Point(c, TableHeight)] = new Cell(c, TableHeight);
+                for (int c = 1; c <= ColumnsCount; c++)
+                    table[new Point(c, RowsCount)] = new Cell(c, RowsCount);
 
-                DecreaseRowsCount(rowIndex);
-            }
+                if (rowIndex <= MaxChangedRow) MaxChangedRow--;
+                Resize();
+            //}
         }
 
         public void RemoveColumn(int columnIndex)
         {
-            if (columnIndex <= MaxChangedColumn)
-            {
-                for (int c = columnIndex; c < TableWidth; c++)
-                    for (int r = 1; r <= TableHeight; r++)
+            //if (columnIndex <= MaxChangedColumn)
+            //{
+                for (int c = columnIndex; c < ColumnsCount; c++)
+                    for (int r = 1; r <= RowsCount; r++)
                         this[c, r] = this[c + 1, r];
 
-                for (int r = 1; r <= TableHeight; r++)
-                    table[new Point(TableWidth, r)] = new Cell(TableWidth, r);
+                for (int r = 1; r <= RowsCount; r++)
+                    table[new Point(ColumnsCount, r)] = new Cell(ColumnsCount, r);
 
-                DecreaseColumnsCount(columnIndex);
-            }
+                if (columnIndex <= MaxChangedColumn) MaxChangedColumn--;
+                Resize();
+            //}
         }
         public void PushData(Point point, string data)
         {
@@ -240,35 +164,115 @@ namespace App
 
         public void Resize()
         {
-            if (MaxChangedColumn == TableWidth && MaxChangedRow == TableHeight)
-                Resize(1, 0);
-            else if (MaxChangedColumn == TableWidth)
-                Resize(1, 0);
-            else if (MaxChangedRow == TableHeight)
-                Resize(0, 1);
+            if (MaxChangedColumn == ColumnsCount && MaxChangedRow == RowsCount)
+                Resize(0.5,0.5);
+            else if (MaxChangedColumn == ColumnsCount)
+                Resize(0.5, 0);
+            else if (MaxChangedRow == RowsCount)
+                Resize(0, 0.5);
             else return;
 
         }
 
-        public void Resize(int deltaX, int deltaY)
+        public void Resize(double deltaX, double deltaY)
         {
-            var oldTableWidth = TableWidth;
-            var oldTableHeight = TableHeight;
-            TableWidth += deltaX * TableWidth;
-            TableHeight += deltaY * TableHeight;
+            var oldTableWidth = ColumnsCount;
+            var oldTableHeight = RowsCount;
+            ColumnsCount += (int)(deltaX * ColumnsCount);
+            RowsCount += (int)(deltaY * RowsCount);
 
-            for (int x = 1; x <= TableWidth; x++)
-                for (int y = 1; y <= TableHeight; y++)
+            for (int x = 1; x <= ColumnsCount; x++)
+                for (int y = 1; y <= RowsCount; y++)
                     if (x > oldTableWidth || y > oldTableHeight)
                         table.Add(new Point(x, y), new Cell(x, y));
-
-            for (int i = oldTableWidth + 1; i <= TableWidth; i++)
-                ColumnsWidth.Add(i, Cell.defaultWidth);
-
-            for (int i = oldTableHeight + 1; i <= TableHeight; i++)
-                RowsHeight.Add(i, Cell.defaultHeight);
         }
 
-        
+
+
+
+        public void CutRow(int rowIndex)
+        {
+            
+            //if (rowIndex <= MaxChangedRow)
+            //{
+                var bufferedRow = new Dictionary<int,string>();
+                for (int c = 1; c <= ColumnsCount; c++)
+                {
+                    bufferedRow.Add(c, this[c, rowIndex].Data);
+                }
+                buffer.AddRow(bufferedRow);
+                RemoveRow(rowIndex);
+            //}
+        }
+
+        public void CutColumn(int columnIndex)
+        {
+            var bufferedColumn = new Dictionary<int, string>();
+            for (int r = 1; r <= RowsCount; r++)
+            {
+                bufferedColumn.Add(r, this[columnIndex, r].Data);
+            }
+            buffer.AddColumn(bufferedColumn);
+            RemoveColumn(columnIndex);
+        }
+
+        public void CopyRow(int rowIndex)
+        {
+            var bufferedRow = new Dictionary<int, string>();
+            for (int c = 1; c <= ColumnsCount; c++)
+            {
+                bufferedRow.Add(c, this[c, rowIndex].Data);
+            }
+            buffer.AddRow(bufferedRow);
+        }
+
+        public void CopyColumn(int columnIndex)
+        {
+            var bufferedColumn = new Dictionary<int, string>();
+            for (int r = 1; r <= RowsCount; r++)
+            {
+                bufferedColumn.Add(r, this[columnIndex, r].Data);
+            }
+            buffer.AddColumn(bufferedColumn);
+        }
+
+        public void PastRow(int rowIndex)
+        {
+            var bufferedRow = buffer.GetRow();
+            for (int r = RowsCount - 1; r >= rowIndex; r--)
+                for (int c = 1; c <= ColumnsCount; c++)
+                    this[c, r + 1] = this[c, r];
+
+            for (int c = 1; c <= ColumnsCount; c++)
+            {
+                table[new Point(c, rowIndex)] = new Cell(c, rowIndex);
+                if (bufferedRow.ContainsKey(c))
+                    table[new Point(c, rowIndex)].PushData(bufferedRow[c]);
+                else table[new Point(c, rowIndex)].PushData("");
+            }
+
+            if (rowIndex <= MaxChangedRow) MaxChangedRow++;
+            Resize();
+        }
+
+        public void PastColumn(int columnIndex)
+        {
+            var bufferedColumn = buffer.GetColumn();
+            for (int c = ColumnsCount - 1; c >= columnIndex; c--)
+                for (int r = 1; r <= RowsCount; r++)
+                    this[c + 1, r] = this[c, r];
+
+            for (int r = 1; r <= RowsCount; r++)
+            {
+                table[new Point(columnIndex, r)] = new Cell(columnIndex, r);
+                if (bufferedColumn.ContainsKey(r))
+                    table[new Point(columnIndex, r)].PushData(bufferedColumn[r]);
+                else table[new Point(columnIndex, r)].PushData("");
+                        
+            }
+
+            if (columnIndex <= MaxChangedColumn) MaxChangedColumn++;
+            Resize();
+        }
     }
 }

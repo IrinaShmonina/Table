@@ -45,8 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AxisType.cs" />
+    <Compile Include="Buffer.cs" />
     <Compile Include="Cell.cs" />
+    <Compile Include="IBuffer.cs" />
     <Compile Include="ITable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
