@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App
+namespace Domain
 {
-    public interface IBuffer 
+    public interface IBuffer
     {
         void AddRow(Dictionary<int, string> row);
         void AddColumn(Dictionary<int, string> column);

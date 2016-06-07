@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App
+namespace Domain
 {
     public class Buffer : IBuffer
     {
@@ -39,4 +38,3 @@ namespace App
         }
     }
 }
-
