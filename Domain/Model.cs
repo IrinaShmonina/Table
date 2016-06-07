@@ -9,7 +9,7 @@ namespace Domain
 
     public static class StringExtensions
     {
-        public static String[] SmartSplit(this String str)
+        public static String[] SplitOnArguments(this String str)
         {
             var s = new List<String>();
             var q = "";
@@ -53,22 +53,41 @@ namespace Domain
             s.Add(q);
             return s.ToArray();
         }
+
+        public static string Repeat(this String str, int times)
+        {
+            var newStr = "";
+            for (var i = 0; i < times; i++)
+                newStr += str;
+            return newStr;
+        }
     }
 
     public class TextParser
     {
         public static Table Table;
-        public Dictionary<String, Func<String, String, String>> FuncDict;
+        public static Dictionary<String, Func<String, String, String>> FuncDict;
 
-        public TextParser()
+        static TextParser()
         {
-            this.FuncDict = new Dictionary<string, Func<string, string, string>>();
+            TextParser.FuncDict = new Dictionary<string, Func<string, string, string>>();
             FuncDict["СУММ"] = (x, y) => (int.Parse(x) + int.Parse(y)).ToString();
-            FuncDict["КОНК"] = (x, y) => x + y;
+            FuncDict["РАЗН"] = (x, y) => (int.Parse(x) - int.Parse(y)).ToString();
             FuncDict["УМН"] = (x, y) => (int.Parse(x) * int.Parse(y)).ToString();
+            FuncDict["ДЕЛ"] = (x, y) => ((double)int.Parse(x) / int.Parse(y)).ToString();
+
+            FuncDict["СТЕП"] = (x, y) => Math.Pow(int.Parse(x),int.Parse(y)).ToString();
+            FuncDict["КОР"] = (x, y) => Math.Pow(int.Parse(x), 1 / (double)int.Parse(y)).ToString();
+
+            FuncDict["БОЛЬШ"] = (x, y) => (int.Parse(x) < int.Parse(y)).ToString();
+            FuncDict["МЕНЬШ"] = (x, y) => (int.Parse(x) > int.Parse(y)).ToString();
+            FuncDict["РАВН"] = (x, y) => (int.Parse(x) == int.Parse(y)).ToString();
+
+            FuncDict["КОНК"] = (x, y) => x + y;
+            FuncDict["ПОВТ"] = (x, y) => x.Repeat(int.Parse(y));
         }
 
-        public Tuple<List<Cell>, String> ParseText(String text)
+        static public Tuple<List<Cell>, String> ParseText(String text)
         {
             var list = new List<Cell>();
             if (text[0] != '=')
@@ -86,11 +105,11 @@ namespace Domain
                     {
                         if (!newText.EndsWith(")") || newText[funcname.Length] != '(')
                             throw new Exception();
-                        var substr = newText.Substring(funcname.Length + 1, newText.Length - funcname.Length - 1 - 1).SmartSplit();
+                        var substr = newText.Substring(funcname.Length + 1, newText.Length - funcname.Length - 1 - 1).SplitOnArguments();
                         var v = new String[substr.Length];
                         for (var i = 0; i < substr.Length; i++)
                         {
-                            var textParser = new TextParser().ParseText("=" + substr[i]);
+                            var textParser = TextParser.ParseText("=" + substr[i]);
                             v[i] = textParser.Item2;
                             list.AddRange(textParser.Item1);
                         }
