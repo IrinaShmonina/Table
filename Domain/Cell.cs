@@ -13,17 +13,22 @@ namespace Domain
         public int ColumnNumber { get; private set; }
         public int RowNumber { get; private set; }
         public string Data { get; private set; }
-        public string text; //{ get; private set; }
+        public string Formula { get; private set; }
 
-        public Cell(int columnNumber, int rowNumber, string data = "")
+        public Cell(int columnNumber, int rowNumber, string data = "", string formula = "")
         {
             this.ColumnNumber = columnNumber;
             this.RowNumber = rowNumber;
             this.Data = data;
+            this.Formula = formula;
         }
         public void PushData(string x)
         {
             Data = x;
+        }
+        public void SetFormula(string f)
+        {
+            Formula = f;
         }
         //добавил
         public void SetNewCoords(int x, int y)

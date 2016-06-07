@@ -52,7 +52,7 @@ namespace GUI
             this.MinimumSize = new Size(800, 600);
             //this.AutoSize = true;
             this.WindowState = FormWindowState.Maximized;
-            this.SizeChanged += (sender, args) => 
+            this.SizeChanged += (sender, args) =>
             {
                 DrawTable();
             };//DrawTable();
@@ -105,7 +105,7 @@ namespace GUI
                 };
             Controls.Add(focusedCell);
 
-            
+
 
             MaxXCoord = new TextBox();
             MaxXCoord.Location = new Point(400, 30);
@@ -370,7 +370,12 @@ namespace GUI
                     textbox.Width = Cell.Width;
                     textbox.Height = Cell.Height;
 
-                    textbox.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
+                    if (table[currentShift.Width + i, currentShift.Height + j].Formula == "")
+                        textbox.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
+                    else
+                    {
+                        //дописать
+                    }
 
                     textbox.GotFocus += (s, a) =>
                     {
@@ -380,9 +385,19 @@ namespace GUI
                     };
                     textbox.TextChanged += (s, a) =>
                     {
-                        PushData(new Point(currentShift.Width + i, currentShift.Height + j), textbox.Text);
-                        currentTextBox = textbox;
-                        focusedCell.Text = textbox.Text;
+                        var text = textbox.Text;
+                        if ((text.Length > 0 && text[0] != '=') || text.Length == 0)
+                        {
+                            PushData(new Point(currentShift.Width + i, currentShift.Height + j), textbox.Text);
+                            currentTextBox = textbox;
+                            focusedCell.Text = textbox.Text;
+
+                        }
+                        else
+                        {
+                            SetFormula(new Point(currentShift.Width + i, currentShift.Height + j), text);
+                        }
+
                     };
                 }
             }
@@ -398,19 +413,22 @@ namespace GUI
             {
                 table.Deserialize();
             }
-            catch(FileNotFoundException ex)
+            catch (FileNotFoundException ex)
             {
                 MessageBox.Show("Нечего загружать!");
             }
             DrawTable();
         }
+        void SetFormula(Point point, string formula)
+        {
+            table.SetFormula(point, formula);
+            ShowMaxCoords();
+            //DrawTable();
+        }
         void PushData(Point point, string text)
         {
-            var needReDraw = false;
-            if (point.X == table.ColumnsCount || point.Y == table.RowsCount) needReDraw = true;
             table.PushData(point, text);
             ShowMaxCoords();
-            if (needReDraw) DrawTable();
         }
         void AddRow(int number)
         {
