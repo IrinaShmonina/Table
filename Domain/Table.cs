@@ -150,6 +150,11 @@ namespace Domain
             if (point.Y >= MaxChangedRow) MaxChangedRow = point.Y;
             Resize();
         }
+        public void SetFormula(Point point, string data)
+        {
+            table[point].SetFormula(data);
+            Resize();
+        }
 
         public void Resize()
         {
@@ -255,5 +260,8 @@ namespace Domain
         {
             table = (Dictionary<Point, Cell>)serializer.Deserialize(table.GetType());
         }
+
+
+
     }
 }

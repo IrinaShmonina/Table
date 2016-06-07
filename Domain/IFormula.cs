@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    class TextParser
+    public interface IFormula
     {
+        void Execute();
     }
 }

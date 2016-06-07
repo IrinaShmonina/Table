@@ -56,12 +56,13 @@
     <Compile Include="Buffer.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="ExpressionCalculator.cs" />
+    <Compile Include="FormulaParser.cs" />
     <Compile Include="IBuffer.cs" />
+    <Compile Include="IFormula.cs" />
     <Compile Include="ITable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Table.cs" />
-    <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
