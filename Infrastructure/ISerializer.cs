@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App
+namespace Infrastructure
 {
-    public enum AxisType
+    public interface ISerializer
     {
-        Row,
-        Column
+        void Serialise(object obj);
+        object Deserialize(Type type);
     }
 }

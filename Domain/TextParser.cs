@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    class Program
+    class TextParser
     {
-        public static void Main(string[] args)
-        {
-
-        }
     }
 }

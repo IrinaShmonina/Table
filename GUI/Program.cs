@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using App;
+using Domain;
+using Ninject;
+using Infrastructure;
 
 namespace GUI
 {
@@ -14,8 +16,11 @@ namespace GUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var table = new Table();
-            var form = new AppForm(table);
+            var container = new StandardKernel();//DI container
+            container.Bind<IBuffer>().To<Domain.Buffer>();
+            container.Bind<ITable>().To<Table>();
+            container.Bind<ISerializer>().To<JsonSerializer>();
+            var form = container.Get<AppForm>();
             Application.Run(form);
         }
     }

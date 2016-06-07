@@ -76,7 +76,7 @@ namespace Domain
             FuncDict["УМН"] = (x, y) => (int.Parse(x) * int.Parse(y)).ToString();
             FuncDict["ДЕЛ"] = (x, y) => ((double)int.Parse(x) / int.Parse(y)).ToString();
 
-            FuncDict["СТЕП"] = (x, y) => Math.Pow(int.Parse(x),int.Parse(y)).ToString();
+            FuncDict["СТЕП"] = (x, y) => Math.Pow(int.Parse(x), int.Parse(y)).ToString();
             FuncDict["КОР"] = (x, y) => Math.Pow(int.Parse(x), 1 / (double)int.Parse(y)).ToString();
 
             FuncDict["БОЛЬШ"] = (x, y) => (int.Parse(x) < int.Parse(y)).ToString();
@@ -95,7 +95,7 @@ namespace Domain
             {
                 if (text.Length == 3)
                 {
-                    var cell = Table[ text[1], int.Parse(text[2].ToString())];
+                    var cell = Table[text[1], int.Parse(text[2].ToString())];
                     return Tuple.Create(new List<Cell>(new Cell[] { cell }), cell.text);
                 }
                 var newText = text.Substring(1).Replace(" ", "");
