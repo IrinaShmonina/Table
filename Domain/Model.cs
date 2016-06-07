@@ -81,7 +81,6 @@ namespace Domain
 
             FuncDict["БОЛЬШ"] = (x, y) => (int.Parse(x) < int.Parse(y)).ToString();
             FuncDict["МЕНЬШ"] = (x, y) => (int.Parse(x) > int.Parse(y)).ToString();
-            FuncDict["РАВН"] = (x, y) => (int.Parse(x) == int.Parse(y)).ToString();
 
             FuncDict["КОНК"] = (x, y) => x + y;
             FuncDict["ПОВТ"] = (x, y) => x.Repeat(int.Parse(y));
