@@ -78,7 +78,7 @@ namespace Domain
                 table[new Point(x, y)].SetNewCoords(x, y);
             }
         }
-        public Cell this[Point point]
+        public double this[Point point]
         {
             get
             {
@@ -144,14 +144,8 @@ namespace Domain
         }
         public void PushData(Point point, string data)
         {
+
             table[point].PushData(data);
-            if (point.X >= MaxChangedColumn) MaxChangedColumn = point.X;
-            if (point.Y >= MaxChangedRow) MaxChangedRow = point.Y;
-            Resize();
-        }
-        public void SetFormula(Point point, string data)
-        {
-            table[point].SetFormula(data);
             if (point.X >= MaxChangedColumn) MaxChangedColumn = point.X;
             if (point.Y >= MaxChangedRow) MaxChangedRow = point.Y;
             Resize();
@@ -261,8 +255,5 @@ namespace Domain
         {
             table = (Dictionary<Point, Cell>)serializer.Deserialize(table.GetType());
         }
-
-
-        
     }
 }

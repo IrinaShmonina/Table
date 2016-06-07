@@ -30,10 +30,10 @@ namespace Domain
             return result;
         }
 
-        public static double Count(string expression, Table table)
+        public static double Count(string expression, Dictionary<Point,Cell> table)
         {
             var point = default(Point);
-            if (TryParse(expression, out point)) return table[point];
+            if (TryParse(expression, out point)) return double.Parse(table[point].Data);
             var nameAndArgs = GetNameAndArgs(expression);
             var func = nameToFunc[nameAndArgs.Item1];
             return func(Count(nameAndArgs.Item2, table), Count(nameAndArgs.Item3, table));
