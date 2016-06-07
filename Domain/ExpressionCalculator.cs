@@ -9,15 +9,14 @@ using System.Threading.Tasks;
 namespace Domain
 {
     public static class ExpressionCalculator
-
     {
         private static Dictionary<string, Func<double, double, double>> nameToFunc =
             new Dictionary<string, Func<double, double, double>>()
             {
-                ["сумм"] = new Func<double, double, double>((x, y) => x + y),
-                ["умн"] = new Func<double, double, double>((x, y) => x * y),
-                ["рзнст"] = new Func<double, double, double>((x, y) => x - y),
-                ["дел"] = new Func<double, double, double>((x, y) => x / y),
+                {"сумм",new Func<double, double, double>((x, y) => x + y)},
+                {"умн",new Func<double, double, double>((x, y) => x * y)},
+                {"рзнст",new Func<double, double, double>((x, y) => x - y)},
+                {"дел",new Func<double, double, double>((x, y) => x / y)}
             };
 
 
@@ -30,7 +29,7 @@ namespace Domain
             return result;
         }
 
-        public static double Count(string expression, Dictionary<Point,Cell> table)
+        public static double Count(string expression, Dictionary<Point, Cell> table)
         {
             var point = default(Point);
             if (TryParse(expression, out point)) return double.Parse(table[point].Data);
