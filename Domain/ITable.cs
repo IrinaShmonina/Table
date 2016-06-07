@@ -15,7 +15,7 @@ namespace Domain
         int MaxChangedRow { get; set; }
 
         Cell this[int x, int y] { get; set; }
-        double this[Point point] { get; set; }
+        Cell this[Point point] { get; set; }
 
         void AddRow(int y);
         void AddColumn(int x);

@@ -78,7 +78,7 @@ namespace Domain
                 table[new Point(x, y)].SetNewCoords(x, y);
             }
         }
-        public double this[Point point]
+        public Cell this[Point point]
         {
             get
             {
