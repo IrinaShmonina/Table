@@ -15,7 +15,7 @@ namespace Domain
         int MaxChangedRow { get; set; }
 
         Cell this[int x, int y] { get; set; }
-        Cell this[Point point] { get; set; }
+        double this[Point point] { get; set; }
 
         void AddRow(int y);
         void AddColumn(int x);
@@ -30,7 +30,6 @@ namespace Domain
         void PastColumn(int x);
 
         void PushData(Point point, string data);
-        void SetFormula(Point point, string data);
         void Resize();
         void Resize(double deltaX, double deltaY);
         void Serialize();
