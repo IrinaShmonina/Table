@@ -42,28 +42,33 @@ namespace Domain
             this.serializer = serializer;
         }
 
-        public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInPixels, int yShiftInCells)
-        {
-            var result = new Dictionary<int, int>();
-            var yCoord = yShiftInPixels;
-            for (int i = yShiftInCells + 1; i <= RowsCount; i++)
-            {
-                result.Add(i, yCoord);
-                yCoord += Cell.Height;
-            }
-            return result;
-        }
+        //public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInPixels, int yShiftInCells)
+        //{
+        //    var result = new Dictionary<int, int>();
+        //    var yCoord = yShiftInPixels;
+        //    for (int i = yShiftInCells + 1; i <= RowsCount; i++)
+        //    {
+        //        result.Add(i, yCoord);
+        //        yCoord += Cell.Height;
+        //    }
+        //    return result;
+        //}
 
-        public Dictionary<int, int> GetShiftedColumnsCoords(int xShiftInPixels, int xShiftInCells)
+        //public Dictionary<int, int> GetShiftedColumnsCoords(int xShiftInPixels, int xShiftInCells)
+        //{
+        //    var result = new Dictionary<int, int>();
+        //    var xCoord = xShiftInPixels;
+        //    for (int i = xShiftInCells + 1; i <= ColumnsCount; i++)
+        //    {
+        //        result.Add(i, xCoord);
+        //        xCoord += Cell.Width;
+        //    }
+        //    return result;
+        //}
+
+        public Dictionary<Point, Cell> GetTable()
         {
-            var result = new Dictionary<int, int>();
-            var xCoord = xShiftInPixels;
-            for (int i = xShiftInCells + 1; i <= ColumnsCount; i++)
-            {
-                result.Add(i, xCoord);
-                xCoord += Cell.Width;
-            }
-            return result;
+            return table;
         }
 
         public Cell this[int x, int y]
@@ -263,5 +268,8 @@ namespace Domain
 
 
 
+
+
+        
     }
 }

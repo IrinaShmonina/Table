@@ -22,15 +22,16 @@ namespace Domain
 
 
 
-        public static Match Split(this string str)
-        {
-            var pattern = @"=(.*?)((/*))";
-            var result = Regex.Match(str, pattern);
-            return result;
-        }
+        //public static Match Split(this string str)
+        //{
+        //    var pattern = @"=(.*?)((/*))";
+        //    var result = Regex.Match(str, pattern);
+        //    return result;
+        //}
 
-        public static double Count(string expression, Dictionary<Point, Cell> table)
+        public static double Count(string expr, Dictionary<Point, Cell> table)
         {
+            var expression = expr.Remove(0, 1);
             var point = default(Point);
             if (TryParse(expression, out point)) return double.Parse(table[point].Data);
             var nameAndArgs = GetNameAndArgs(expression);

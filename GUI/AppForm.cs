@@ -370,11 +370,13 @@ namespace GUI
                     textbox.Width = Cell.Width;
                     textbox.Height = Cell.Height;
 
+                    var point = new Point(currentShift.Width + i, currentShift.Height + j);
+
                     if (table[currentShift.Width + i, currentShift.Height + j].Formula == "")
-                        textbox.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
+                        textbox.Text = table[point].Data;
                     else
                     {
-                        //дописать
+                        textbox.Text = ExpressionCalculator.Count(table[point].Formula, table.GetTable()).ToString();
                     }
 
                     textbox.GotFocus += (s, a) =>
@@ -388,19 +390,23 @@ namespace GUI
                         var text = textbox.Text;
                         if ((text.Length > 0 && text[0] != '=') || text.Length == 0)
                         {
-                            PushData(new Point(currentShift.Width + i, currentShift.Height + j), textbox.Text);
+                            PushData(point, textbox.Text);
+                            if (table[point].Formula != "")
+                                SetFormula(point, "");
                             currentTextBox = textbox;
                             focusedCell.Text = textbox.Text;
-
                         }
                         else
                         {
-                            SetFormula(new Point(currentShift.Width + i, currentShift.Height + j), text);
+                            PushData(point, ExpressionCalculator.Count(text, table.GetTable()).ToString());
+                            SetFormula(point, textbox.Text);
+                            
                         }
 
                     };
                 }
             }
+            //DrawTable();
         }
         void SerializeData()
         {
@@ -423,7 +429,7 @@ namespace GUI
         {
             table.SetFormula(point, formula);
             ShowMaxCoords();
-            //DrawTable();
+            DrawTable();
         }
         void PushData(Point point, string text)
         {
