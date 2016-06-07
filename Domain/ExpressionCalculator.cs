@@ -20,8 +20,6 @@ namespace Domain
             };
 
 
-
-
         public static bool IsCorrect(this string str)
         {
             var pattern = @"=(.*?)((/*))";
@@ -29,11 +27,14 @@ namespace Domain
             return result;
         }
 
-        public static double Count(string expr, Dictionary<Point, Cell> table)
+        public static double Count(string expression, Dictionary<Point, Cell> table)
         {
-            var expression = expr.Remove(0, 1);
             var point = default(Point);
-            if (TryParse(expression, out point)) return double.Parse(table[point].Data);
+            if (TryParse(expression, out point))
+            {
+                ////
+                return double.Parse(table[point].Data);
+            }
             var nameAndArgs = GetNameAndArgs(expression);
             var func = nameToFunc[nameAndArgs.Item1];
             return func(Count(nameAndArgs.Item2, table), Count(nameAndArgs.Item3, table));
@@ -73,7 +74,6 @@ namespace Domain
             result = default(Point);
             return false;
         }
-       
 
 
     }

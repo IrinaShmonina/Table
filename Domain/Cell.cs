@@ -14,6 +14,7 @@ namespace Domain
         public int RowNumber { get; private set; }
         public string Data { get; private set; }
         public string Formula { get; private set; }
+        public List<Cell> dependentCells;
 
         public Cell(int columnNumber, int rowNumber, string data = "", string formula = "")
         {
@@ -21,6 +22,7 @@ namespace Domain
             this.RowNumber = rowNumber;
             this.Data = data;
             this.Formula = formula;
+            dependentCells = new List<Cell>();
         }
         public void PushData(string x)
         {
@@ -35,6 +37,10 @@ namespace Domain
         {
             ColumnNumber = x;
             RowNumber = y;
+        }
+        public void AddDependentCell(Cell cell)
+        {
+            dependentCells.Add(cell);
         }
 
     }
