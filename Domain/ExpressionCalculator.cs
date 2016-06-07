@@ -22,16 +22,15 @@ namespace Domain
 
 
 
-        //public static Match Split(this string str)
-        //{
-        //    var pattern = @"=(.*?)((/*))";
-        //    var result = Regex.Match(str, pattern);
-        //    return result;
-        //}
-
-        public static double Count(string expr, Dictionary<Point, Cell> table)
+        public static bool IsCorrect(this string str)
         {
-            var expression = expr.Remove(0, 1);
+            var pattern = @"=(.*?)((/*))";
+            var result = Regex.IsMatch(str, pattern);
+            return result;
+        }
+
+        public static double Count(string expression, Dictionary<Point, Cell> table)
+        {
             var point = default(Point);
             if (TryParse(expression, out point)) return double.Parse(table[point].Data);
             var nameAndArgs = GetNameAndArgs(expression);
@@ -63,7 +62,7 @@ namespace Domain
         }
         public static bool TryParse(string s, out Point result)
         {
-            string pattern = @"\((\d+);(\d+)\)";
+            string pattern = @"^\((\d+);(\d+)\)$";
             if (Regex.IsMatch(s, pattern))
             {
                 var m = Regex.Match(s, pattern);
