@@ -22,10 +22,10 @@ namespace Domain
 
 
 
-        public static Match Split(this string str)
+        public static bool IsCorrect(this string str)
         {
             var pattern = @"=(.*?)((/*))";
-            var result = Regex.Match(str, pattern);
+            var result = Regex.IsMatch(str, pattern);
             return result;
         }
 
@@ -62,7 +62,7 @@ namespace Domain
         }
         public static bool TryParse(string s, out Point result)
         {
-            string pattern = @"\((\d+);(\d+)\)";
+            string pattern = @"^\((\d+);(\d+)\)$";
             if (Regex.IsMatch(s, pattern))
             {
                 var m = Regex.Match(s, pattern);
