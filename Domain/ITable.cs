@@ -30,6 +30,7 @@ namespace Domain
         void PastColumn(int x);
 
         void PushData(Point point, string data);
+        void SetFormula(Point point, string data);
         void Resize();
         void Resize(double deltaX, double deltaY);
         void Serialize();

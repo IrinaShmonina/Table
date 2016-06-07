@@ -55,7 +55,9 @@
   <ItemGroup>
     <Compile Include="Buffer.cs" />
     <Compile Include="Cell.cs" />
+    <Compile Include="FormulaParser.cs" />
     <Compile Include="IBuffer.cs" />
+    <Compile Include="IFordddmula.cs" />
     <Compile Include="ITable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
