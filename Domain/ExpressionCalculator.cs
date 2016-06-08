@@ -35,7 +35,7 @@ namespace Domain
                 table[point].SetChangedAnotherCell();
                 return double.Parse(table[point].Data);
             }
-            if (IsNumber(expression)) return double.Parse(expression);
+            if (IsNumber(expression)) return double.Parse(expression.Trim('(',')'));
             var nameAndArgs = GetNameAndArgs(expression);
             var func = nameToFunc[nameAndArgs.Item1];
             return func(Count(nameAndArgs.Item2, table), Count(nameAndArgs.Item3, table));
@@ -78,7 +78,7 @@ namespace Domain
 
         public static bool IsNumber(string s)
         {
-            string pattern = @"^\d+$";
+            string pattern = @"^[(]?[-]?\d+[)]?$";
             return Regex.IsMatch(s, pattern);
         }
 

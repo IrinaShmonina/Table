@@ -56,6 +56,7 @@ namespace Domain
 
         [TestCase("add((1;1);(2;2))", 3.0)]
         [TestCase("add(1;1)", 2.0)]
+        [TestCase("mult((-1);(1;1))", -2.0)]
         [TestCase("add(add((1;1);(2;2));(2;2))", 4.0)]
         [TestCase("add(mult((1;1);(2;2));mult((1;1);(2;2)))", 4.0)]
         [TestCase("div(add((1;1);(2;2));mult((1;1);(2;2)))", 1.5)]
