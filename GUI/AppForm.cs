@@ -394,6 +394,8 @@ namespace GUI
         void PushData(Point point, string text)
         {
             table.PushData(point, text);
+            if (table[point].ChangesAnotherCell)
+                DrawTable();
         }
         void AddRow(int number)
         {
