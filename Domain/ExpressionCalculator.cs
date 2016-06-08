@@ -20,7 +20,7 @@ namespace Domain
             };
 
 
-        public static bool IsCorrect(this string str)
+        public static bool IsCorrect(this string str)//
         {
             var pattern = @"=(.*?)((/*))";
             var result = Regex.IsMatch(str, pattern);
