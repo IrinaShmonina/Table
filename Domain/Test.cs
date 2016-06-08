@@ -13,6 +13,8 @@ namespace Domain
     class Test
     {
         [TestCase("=сумм((1;1);(2;2))")]
+        [TestCase("=сумм(сумм((1;1);(2;2));(2;2))")]
+        [TestCase("=(1;1)")]
         public void TestIsCorrect(string start)
         {
             Assert.That(ExpressionCalculator.IsCorrect(start),Is.EqualTo(true));
@@ -33,6 +35,7 @@ namespace Domain
         }
 
         [TestCase("сумм((1;1);(2;2))", 2.0)]
+        [TestCase("сумм(сумм((1;1);(2;2));(2;2))", 3.0)]
         public void TestCount(string str, double number)
         {
             Dictionary<Point,Cell> table=new Dictionary<Point, Cell>()
