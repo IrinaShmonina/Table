@@ -158,6 +158,8 @@ namespace Domain
         public void SetFormula(Point point, string data)
         {
             table[point].SetFormula(data);
+            if (point.X >= MaxChangedColumn) MaxChangedColumn = point.X;
+            if (point.Y >= MaxChangedRow) MaxChangedRow = point.Y;
             Resize();
         }
 
