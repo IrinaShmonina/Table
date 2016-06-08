@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Domain
 {
     [TestFixture]
-    class Test
+    public class TestExpressionCalculator
     {
         [TestCase("=сумм((1;1);(2;2))",true)]
         [TestCase("=сумм(сумм((1;1);(2;2));(2;2))",true)]
