@@ -22,9 +22,6 @@ namespace GUI
         private TextBox focusedCellFormula;
         private TextBox focusedCellCoords;
 
-        private TextBox MaxXCoord;
-        private TextBox MaxYCoord;
-
         private VScrollBar vScroller;
         private HScrollBar hScroller;
 
@@ -56,8 +53,6 @@ namespace GUI
                 DrawTable();
             };
 
-            //this.Resize += (sender, args) => { DrawTable(); };
-
             DoubleBuffered = true;
 
             mainMenu = new MenuStrip();
@@ -73,15 +68,8 @@ namespace GUI
                 new ToolStripMenuItem("Редактирование",null,
                     new ToolStripMenuItem[]
                     {
-                        //new ToolStripMenuItem("Вставить строку", null,InsertRow),
-                        //new ToolStripMenuItem("Вставить столбец", null,InsertColumn),
-                        //new ToolStripMenuItem("Удалить строку", null,RemoveRow),
-                        //new ToolStripMenuItem("Удалить столбец", null,RemoveColumn),
-                        //new ToolStripMenuItem("Изменить ширину столбца", null,ChangeColumnWidth),
-                        //new ToolStripMenuItem("Изменить высоту строки", null,ChangeRowHeigth)
                     }
                     ),
-                new ToolStripMenuItem("Формулы"),
                 new ToolStripMenuItem("О программе", null,(sender,args) => MessageBox.Show("Электронная таблица, версия 1.0\nРазработчики:\nЕрмаков Степан\nШмонина Ирина\nЛевшин Михаил","О программе"))
 
             };
@@ -109,19 +97,6 @@ namespace GUI
             Controls.Add(focusedCellFormula);
 
 
-
-            MaxXCoord = new TextBox();
-            MaxXCoord.Location = new Point(400, 30);
-            MaxXCoord.Size = new Size(40, 20);
-            //MaxXCoord.Text = table.MaxChangedColumn.ToString();
-            Controls.Add(MaxXCoord);
-
-            MaxYCoord = new TextBox();
-            MaxYCoord.Location = new Point(450, 30);
-            MaxYCoord.Size = new Size(40, 20);
-            //MaxYCoord.Text = table.MaxChangedRow.ToString();
-            Controls.Add(MaxYCoord);
-
             vScroller = new VScrollBar();
             vScroller.Dock = DockStyle.Right;
             vScroller.Width = 20;
@@ -133,7 +108,6 @@ namespace GUI
                 currentShift = new Size(currentShift.Width, vScroller.Value);
                 if (vScroller.Value > vScroller.Maximum - 10)
                     table.Resize(0, 0.5);
-                ShowShift();
                 DrawTable();
 
             };
@@ -147,10 +121,9 @@ namespace GUI
             hScroller.Maximum = table.ColumnsCount;
             hScroller.Scroll += (sender, args) =>
             {
-                currentShift = new Size(hScroller.Value , currentShift.Height);
+                currentShift = new Size(hScroller.Value, currentShift.Height);
                 if (hScroller.Value > hScroller.Maximum - 10)
                     table.Resize(0.5, 0);
-                ShowShift();
                 DrawTable();
             };
             Controls.Add(hScroller);
@@ -199,8 +172,6 @@ namespace GUI
                 labels.Add(new Point(i, 0), label);
                 Controls.Add(label);
 
-                //label = labels[new Point(i, 0)];
-
                 label.Location = new Point(ColumnsCoords[currentShift.Width + i], LeftTopY_Pixel - 20);
                 label.Size = new Size(Cell.Width, 20);
                 label.Text = GetLettersFromNumber(currentShift.Width + i);
@@ -225,8 +196,6 @@ namespace GUI
                 labels.Add(new Point(0, j), label);
                 Controls.Add(label);
 
-                //label = labels[new Point(0, j)];
-
                 label.Location = new Point(LeftTopX_Pixel - 50, RowsCoords[currentShift.Height + j]);
                 label.Size = new Size(50, Cell.Height);
                 label.Text = (currentShift.Height + j).ToString();
@@ -248,52 +217,37 @@ namespace GUI
                     textbox.Width = Cell.Width;
                     textbox.Height = Cell.Height;
 
-                    //var point = new Point(currentShift.Width + i, currentShift.Height + j);
-
-                    //if (table[point].Formula == "")
-                    //    textbox.Text = table[point].Data;
-                    //else
-                    //{
-                    //    textbox.Text = ExpressionCalculator.Count(table[point].Formula, table.GetTable()).ToString();
-                    //}
-
                     textbox.GotFocus += (s, a) =>
                     {
                         focusedCellCoords.Text = GetLettersFromNumber(currentShift.Width + i) + "" + (currentShift.Height + j).ToString();
 
-                            focusedCellData.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
-                            focusedCellFormula.Text = table[currentShift.Width + i, currentShift.Height + j].Formula;
+                        focusedCellData.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
+                        focusedCellFormula.Text = table[currentShift.Width + i, currentShift.Height + j].Formula;
 
                     };
+                    textbox.KeyDown += (s, a) =>
+                        {
+                            if (a.KeyCode == Keys.Enter)
+                            {
+                                var text = textbox.Text;
+                                if (!ExpressionCalculator.IsCorrect(text))
+                                {
+                                    PushData(new Point(currentShift.Width + i, currentShift.Height + j), text);
+                                }
+                                else
+                                {
+                                    text = text.Remove(0, 1);
+                                    PushData(new Point(currentShift.Width + i, currentShift.Height + j), ExpressionCalculator.Count(text, table.GetTable()).ToString());
+                                    SetFormula(new Point(currentShift.Width + i, currentShift.Height + j), text);
+                                }
+                                focusedCellData.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
+                                focusedCellFormula.Text = table[currentShift.Width + i, currentShift.Height + j].Formula;
+                            }
+                        };
                     textbox.TextChanged += (s, a) =>
                     {
                         var text = textbox.Text;
-                        if ((text.Length > 0 && text[0] != '=') || text.Length == 0)//!ExpressionCalculator.IsCorrect(text) 
-                        {
-                            PushData(new Point(currentShift.Width + i, currentShift.Height + j), text);
-                            //if (textbox.Focused) SetFormula(new Point(currentShift.Width + i, currentShift.Height + j), "");
-                            //if (table[currentShift.Width + i, currentShift.Height + j].Formula != "")
-                                //SetFormula(new Point(currentShift.Width + i, currentShift.Height + j), "");
-                            //focusedCellData.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
-
-                            //if (table[currentShift.Width + i, currentShift.Height + j].Formula == "")
-                                //focusedCell.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
-                            //else
-                                //focusedCell.Text = table[currentShift.Width + i, currentShift.Height + j].Formula;
-                        }
-                        else
-                        {
-                            text = text.Remove(0, 1);
-                            PushData(new Point(currentShift.Width + i, currentShift.Height + j), ExpressionCalculator.Count(text, table.GetTable()).ToString());
-                            SetFormula(new Point(currentShift.Width + i, currentShift.Height + j), text);
-                            //focusedCellData.Text = table[currentShift.Width + i, currentShift.Height + j].Formula;
-
-
-                            //if (table[currentShift.Width + i, currentShift.Height + j].Formula == "")
-                            //    focusedCell.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
-                            //else
-                            //    focusedCell.Text = table[currentShift.Width + i, currentShift.Height + j].Formula;
-                        }
+                        PushData(new Point(currentShift.Width + i, currentShift.Height + j), text);
                         focusedCellData.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
                         focusedCellFormula.Text = table[currentShift.Width + i, currentShift.Height + j].Formula;
                     };
@@ -304,22 +258,7 @@ namespace GUI
             #endregion//заполнение текстбокса
 
 
-
-            //ColumnsCoords = GetShiftedColumnsCoords(currentShift.Width);
-            //RowsCoords = GetShiftedRowsCoords(currentShift.Height);
-
             DrawTable();
-        }
-        //void ShowMaxCoords()
-        //{
-        //    MaxXCoord.Text = table.MaxChangedColumn.ToString();
-        //    MaxYCoord.Text = table.MaxChangedRow.ToString();
-        //}
-
-        void ShowShift()
-        {
-            MaxXCoord.Text = currentShift.Width.ToString();
-            MaxYCoord.Text = currentShift.Height.ToString();
         }
 
         public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInCells)
@@ -394,31 +333,8 @@ namespace GUI
         }
         void DrawTable()
         {
-            //ColumnsCoords = GetShiftedColumnsCoords(currentShift.Width);
-            //RowsCoords = GetShiftedRowsCoords(currentShift.Height);
-
-            //maxX = 0;
-            //maxY = 0;
-            //for (int x = 1; x <= table.ColumnsCount; x++)
-            //{
-            //    var i = x;
-            //    if (ColumnsCoords[currentShift.Width + i] + Cell.Width < this.Width)
-            //        maxX++;
-            //    else break;
-            //}
-
-            //for (int y = 1; y <= table.RowsCount; y++)
-            //{
-            //    var j = y;
-            //    if (RowsCoords[currentShift.Height + j] + Cell.Height < this.Height)
-            //        maxY++;
-            //    else break;
-            //}
             vScroller.Maximum = table.RowsCount - maxY;
             hScroller.Maximum = table.ColumnsCount - maxX;
-
-            //MaxXCoord.Text = maxX.ToString();
-            //MaxYCoord.Text = maxY.ToString();
 
             for (int x = 1; x <= maxX; x++)
             {
@@ -473,75 +389,63 @@ namespace GUI
         void SetFormula(Point point, string formula)
         {
             table.SetFormula(point, formula);
-            //ShowMaxCoords();
             DrawTable();
         }
         void PushData(Point point, string text)
         {
             table.PushData(point, text);
-            //ShowMaxCoords();
         }
         void AddRow(int number)
         {
             table.AddRow(number);
-            //ShowMaxCoords();
             DrawTable();
         }
         void AddColumn(int number)
         {
             table.AddColumn(number);
-            //ShowMaxCoords();
             DrawTable();
         }
         void RemoveRow(int number)
         {
             table.RemoveRow(number);
-            //ShowMaxCoords();
             DrawTable();
         }
         void RemoveColumn(int number)
         {
             table.RemoveColumn(number);
-            //ShowMaxCoords();
             DrawTable();
         }
 
         void CutRow(int number)
         {
             table.CutRow(number);
-            //ShowMaxCoords();
             DrawTable();
         }
         void CutColumn(int number)
         {
             table.CutColumn(number);
-            //ShowMaxCoords();
             DrawTable();
         }
 
         void CopyRow(int number)
         {
             table.CopyRow(number);
-            //ShowMaxCoords();
             DrawTable();
         }
         void CopyColumn(int number)
         {
             table.CopyColumn(number);
-            //ShowMaxCoords();
             DrawTable();
         }
 
         void PastRow(int number)
         {
             table.PastRow(number);
-            //ShowMaxCoords();
             DrawTable();
         }
         void PastColumn(int number)
         {
             table.PastColumn(number);
-            //ShowMaxCoords();
             DrawTable();
         }
 
