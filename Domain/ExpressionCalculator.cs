@@ -22,7 +22,7 @@ namespace Domain
 
         public static bool IsCorrect(this string str)
         {
-            var pattern = @"=(.*?)((/*))";
+            var pattern = @"^=\w*[(](.*?)[)]$";
             var result = Regex.IsMatch(str, pattern);
             return result;
         }
@@ -32,7 +32,6 @@ namespace Domain
             var point = default(Point);
             if (TryParse(expression, out point))
             {
-                ////
                 return double.Parse(table[point].Data);
             }
             var nameAndArgs = GetNameAndArgs(expression);
