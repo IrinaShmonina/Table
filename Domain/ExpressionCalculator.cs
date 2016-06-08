@@ -13,10 +13,10 @@ namespace Domain
         private static Dictionary<string, Func<double, double, double>> nameToFunc =
             new Dictionary<string, Func<double, double, double>>()
             {
-                {"сумм",new Func<double, double, double>((x, y) => x + y)},
-                {"умн",new Func<double, double, double>((x, y) => x * y)},
-                {"рзнст",new Func<double, double, double>((x, y) => x - y)},
-                {"дел",new Func<double, double, double>((x, y) => x / y)}
+                {"add",new Func<double, double, double>((x, y) => x + y)},
+                {"mult",new Func<double, double, double>((x, y) => x * y)},
+                {"sub",new Func<double, double, double>((x, y) => x - y)},
+                {"div",new Func<double, double, double>((x, y) => x / y)}
             };
 
 
