@@ -22,7 +22,7 @@ namespace Domain
 
         public static bool IsCorrect(this string str)
         {
-            var pattern = @"^=\w*[(](.*?)[)]$";
+            var pattern = @"^=\w*[(](.*?[;].*?)[)]$";
             var result = Regex.IsMatch(str, pattern);
             return result;
         }

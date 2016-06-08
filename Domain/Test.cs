@@ -18,6 +18,7 @@ namespace Domain
         [TestCase("(11)",false)]
         [TestCase("(1;1)",false)]
         [TestCase("=(1;",false)]
+        [TestCase("=(11)",false)]
         [TestCase("==;",false)]
         [TestCase("==сумм((1;1);(2;2));", false)]
         public void TestIsCorrect(string start,bool result)
