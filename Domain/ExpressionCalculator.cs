@@ -32,6 +32,7 @@ namespace Domain
             var point = default(Point);
             if (TryParse(expression, out point))
             {
+                table[point].SetChangedAnotherCell();
                 return double.Parse(table[point].Data);
             }
             if (IsNumber(expression)) return double.Parse(expression);

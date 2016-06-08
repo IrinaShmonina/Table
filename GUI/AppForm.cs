@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 using Domain;
+using Infrastructure;
 
 namespace GUI
 {
@@ -174,7 +175,7 @@ namespace GUI
 
                 label.Location = new Point(ColumnsCoords[currentShift.Width + i], LeftTopY_Pixel - 20);
                 label.Size = new Size(Cell.Width, 20);
-                label.Text = GetLettersFromNumber(currentShift.Width + i);
+                label.Text = Converter.ConvertNumbersToLetters(currentShift.Width + i);
                 label.BorderStyle = BorderStyle.Fixed3D;
                 label.TextAlign = ContentAlignment.MiddleCenter;
                 label.ContextMenuStrip = contextMenu;
@@ -219,7 +220,7 @@ namespace GUI
 
                     textbox.GotFocus += (s, a) =>
                     {
-                        focusedCellCoords.Text = GetLettersFromNumber(currentShift.Width + i) + "" + (currentShift.Height + j).ToString();
+                        focusedCellCoords.Text = Converter.ConvertNumbersToLetters(currentShift.Width + i) + "" + (currentShift.Height + j).ToString();
 
                         focusedCellData.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
                         focusedCellFormula.Text = table[currentShift.Width + i, currentShift.Height + j].Formula;
@@ -230,6 +231,7 @@ namespace GUI
                             if (a.KeyCode == Keys.Enter)
                             {
                                 var text = textbox.Text;
+                                
                                 if (!ExpressionCalculator.IsCorrect(text))
                                 {
                                     PushData(new Point(currentShift.Width + i, currentShift.Height + j), text);
@@ -237,6 +239,7 @@ namespace GUI
                                 else
                                 {
                                     text = text.Remove(0, 1);
+                                    text = Converter.GetCorrectString(text);
                                     PushData(new Point(currentShift.Width + i, currentShift.Height + j), ExpressionCalculator.Count(text, table.GetTable()).ToString());
                                     SetFormula(new Point(currentShift.Width + i, currentShift.Height + j), text);
                                 }
@@ -285,32 +288,7 @@ namespace GUI
             return result;
         }
 
-        public string GetLettersFromNumber(int number)
-        {
-            var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var str = "";
-            while (number != 0)
-            {
-                number--;
-                str = alphabet[number % alphabet.Length] + str;
-                number /= alphabet.Length;
-            }
-            return str;
-        }
-
-        public int GetNumberFromLetters(string letters)
-        {
-            var number = 0;
-            var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            for (var i = 0; i < letters.Length; i++)
-            {
-                var a = (int)Math.Pow(alphabet.Length, i);
-                var b = letters[letters.Length - i - 1];
-                var c = alphabet.IndexOf(b) + 1;
-                number += a * c;
-            }
-            return number;
-        }
+        
         void SetMaxXMaxY()
         {
             maxX = 0;
@@ -340,7 +318,7 @@ namespace GUI
             {
                 var i = x;
                 Label label = labels[new Point(i, 0)];
-                label.Text = GetLettersFromNumber(currentShift.Width + i);//
+                label.Text = Converter.ConvertNumbersToLetters(currentShift.Width + i);//
             }
 
             for (int y = 1; y <= maxY; y++)
@@ -394,6 +372,8 @@ namespace GUI
         void PushData(Point point, string text)
         {
             table.PushData(point, text);
+            if (table[point].ChangesAnotherCell)
+                DrawTable();
         }
         void AddRow(int number)
         {
