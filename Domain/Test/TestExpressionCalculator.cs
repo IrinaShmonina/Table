@@ -12,24 +12,24 @@ namespace Domain
     [TestFixture]
     public class TestExpressionCalculator
     {
-        [TestCase("=сумм((1;1);(2;2))",true)]
-        [TestCase("=сумм(сумм((1;1);(2;2));(2;2))",true)]
+        [TestCase("=add((1;1);(2;2))",true)]
+        [TestCase("=add(add((1;1);(2;2));(2;2))",true)]
         [TestCase("=(1;1)",true)]
         [TestCase("(11)",false)]
         [TestCase("(1;1)",false)]
         [TestCase("=(1;",false)]
         [TestCase("=(11)",false)]
         [TestCase("==;",false)]
-        [TestCase("==сумм((1;1);(2;2));", false)]
+        [TestCase("==add((1;1);(2;2));", false)]
         public void TestIsCorrect(string start,bool result)
         {
             Assert.That(ExpressionCalculator.IsCorrect(start),Is.EqualTo(result));
         }
 
 
-        [TestCase("сумм((1;1);(2;2))","сумм","(1;1)","(2;2)")]
-        [TestCase("сумм(сумм((1;1);(2;2));(2;2))", "сумм","сумм((1;1);(2;2))","(2;2)")]
-        [TestCase("сумм(умн((1;1);(2;2));(2;2))", "сумм", "умн((1;1);(2;2))", "(2;2)")]
+        [TestCase("add((1;1);(2;2))","add","(1;1)","(2;2)")]
+        [TestCase("add(add((1;1);(2;2));(2;2))", "add","add((1;1);(2;2))","(2;2)")]
+        [TestCase("add(mult((1;1);(2;2));(2;2))", "add", "mult((1;1);(2;2))", "(2;2)")]
         public void TestGetNameAndArgs(string str, string name, string arg1, string arg2)
         {
             Assert.That(ExpressionCalculator.GetNameAndArgs(str).Item1,Is.EqualTo(name));
@@ -54,12 +54,12 @@ namespace Domain
             new object[] { "(12d;1)",false,default(Point)  },
         };
 
-        [TestCase("сумм((1;1);(2;2))", 3.0)]
-        [TestCase("сумм(1;1)", 2.0)]
-        [TestCase("сумм(сумм((1;1);(2;2));(2;2))", 4.0)]
-        [TestCase("сумм(умн((1;1);(2;2));умн((1;1);(2;2)))", 4.0)]
-        [TestCase("дел(сумм((1;1);(2;2));умн((1;1);(2;2)))", 1.5)]
-        [TestCase("дел(сумм(рзнст((1;1);(2;2));(2;2));умн((1;1);(2;2)))", 1.0)]
+        [TestCase("add((1;1);(2;2))", 3.0)]
+        [TestCase("add(1;1)", 2.0)]
+        [TestCase("add(add((1;1);(2;2));(2;2))", 4.0)]
+        [TestCase("add(mult((1;1);(2;2));mult((1;1);(2;2)))", 4.0)]
+        [TestCase("div(add((1;1);(2;2));mult((1;1);(2;2)))", 1.5)]
+        [TestCase("div(add(sub((1;1);(2;2));(2;2));mult((1;1);(2;2)))", 1.0)]
         public void TestCount(string str, double number)
         {
             Dictionary<Point,Cell> table=new Dictionary<Point, Cell>()
