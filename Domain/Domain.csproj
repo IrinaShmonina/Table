@@ -64,6 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="Test\TestBuffer.cs" />
+    <Compile Include="Test\TestCell.cs" />
     <Compile Include="Test\TestExpressionCalculator.cs" />
   </ItemGroup>
   <ItemGroup>
