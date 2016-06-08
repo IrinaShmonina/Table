@@ -20,9 +20,9 @@ namespace Domain
             };
 
 
-        public static bool IsCorrect(this string str)//
+        public static bool IsCorrect(this string str)
         {
-            var pattern = @"=(.*?)((/*))";
+            var pattern = @"^=\w*[(](.*?[;].*?)[)]$";
             var result = Regex.IsMatch(str, pattern);
             return result;
         }
@@ -32,9 +32,9 @@ namespace Domain
             var point = default(Point);
             if (TryParse(expression, out point))
             {
-                ////
                 return double.Parse(table[point].Data);
             }
+            if (IsNumber(expression)) return double.Parse(expression);
             var nameAndArgs = GetNameAndArgs(expression);
             var func = nameToFunc[nameAndArgs.Item1];
             return func(Count(nameAndArgs.Item2, table), Count(nameAndArgs.Item3, table));
@@ -75,6 +75,11 @@ namespace Domain
             return false;
         }
 
+        public static bool IsNumber(string s)
+        {
+            string pattern = @"^\d+$";
+            return Regex.IsMatch(s, pattern);
+        }
 
     }
 }
