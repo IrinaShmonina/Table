@@ -100,8 +100,8 @@ namespace GUI
             focusedCell.Size = new Size(400, 20);
             focusedCell.TextChanged += (sender, args) =>
                 {
-                    if (currentTextBox != null)
-                        currentTextBox.Text = focusedCell.Text;
+                    //if (currentTextBox != null)
+                    //    currentTextBox.Text = focusedCell.Text;
                 };
             Controls.Add(focusedCell);
 
@@ -288,7 +288,6 @@ namespace GUI
 
                 label.Location = new Point(ColumnsCoords[currentShift.Width + i], LeftTopY_Pixel - 20);
                 label.Size = new Size(Cell.Width, 20);
-                //GetLettersFromNumber(int number)(currentShift.Width + i).ToString()
                 label.Text = GetLettersFromNumber(currentShift.Width + i);
                 label.BorderStyle = BorderStyle.Fixed3D;
                 label.TextAlign = ContentAlignment.MiddleCenter;
@@ -370,37 +369,59 @@ namespace GUI
                     textbox.Width = Cell.Width;
                     textbox.Height = Cell.Height;
 
-                    if (table[currentShift.Width + i, currentShift.Height + j].Formula == "")
-                        textbox.Text = table[currentShift.Width + i, currentShift.Height + j].Data;
+                    var point = new Point(currentShift.Width + i, currentShift.Height + j);
+
+                    if (table[point].Formula == "")
+                        textbox.Text = table[point].Data;
                     else
                     {
-                        //дописать
+                        textbox.Text = ExpressionCalculator.Count(table[point].Formula, table.GetTable()).ToString();
                     }
 
                     textbox.GotFocus += (s, a) =>
                     {
                         focusedCellCoords.Text = GetLettersFromNumber(currentShift.Width + i) + "" + (currentShift.Height + j).ToString();
+
                         currentTextBox = textbox;
-                        focusedCell.Text = textbox.Text;
+                        if (table[point].Formula == "")
+                            focusedCell.Text = textbox.Text;
+                        else
+                            focusedCell.Text = table[point].Formula;
+
                     };
                     textbox.TextChanged += (s, a) =>
                     {
                         var text = textbox.Text;
                         if ((text.Length > 0 && text[0] != '=') || text.Length == 0)
                         {
-                            PushData(new Point(currentShift.Width + i, currentShift.Height + j), textbox.Text);
-                            currentTextBox = textbox;
-                            focusedCell.Text = textbox.Text;
+                            PushData(point, textbox.Text);
 
+                            //if (table[point].Formula != "")
+                            //    SetFormula(point, "");
+
+
+                            currentTextBox = textbox;
+                            if (table[point].Formula == "")
+                                focusedCell.Text = textbox.Text;
+                            else
+                                focusedCell.Text = table[point].Formula;
                         }
                         else
                         {
-                            SetFormula(new Point(currentShift.Width + i, currentShift.Height + j), text);
+                            PushData(point, ExpressionCalculator.Count(text.Remove(0,1), table.GetTable()).ToString());
+                            SetFormula(point, textbox.Text.Remove(0, 1));
+                            currentTextBox = textbox;
+                            if (table[point].Formula == "")
+                                focusedCell.Text = textbox.Text;
+                            else
+                                focusedCell.Text = table[point].Formula;
                         }
+                        
 
                     };
                 }
             }
+            //DrawTable();
         }
         void SerializeData()
         {
@@ -423,7 +444,7 @@ namespace GUI
         {
             table.SetFormula(point, formula);
             ShowMaxCoords();
-            //DrawTable();
+            DrawTable();
         }
         void PushData(Point point, string text)
         {

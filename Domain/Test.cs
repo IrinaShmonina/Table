@@ -34,6 +34,7 @@ namespace Domain
             Assert.That(p,Is.EqualTo(new Point(1,1)));
         }
 
+<<<<<<< HEAD
         [TestCase("сумм((1;1);(2;2))", 2.0)]
         [TestCase("сумм(сумм((1;1);(2;2));(2;2))", 3.0)]
         public void TestCount(string str, double number)
@@ -42,9 +43,18 @@ namespace Domain
             {
                 [new Point(1,1)]=new Cell(1,1,"1",""),
                 [new Point(2,2)]=new Cell(2,2,"1",""),
+=======
+        //[TestCase("сумм((1;1);(2;2))", 2.0)]
+        //public void TestCount(string str, double number)
+        //{
+        //    Dictionary<Point,Cell> table=new Dictionary<Point, Cell>()
+        //    {
+        //        [new Point(1,1)]=new Cell(1,1,"1",""),
+        //        [new Point(2,2)]=new Cell(2,2,"1",""),
+>>>>>>> 6beb4faecfe089573bb1fdce09c2a9c366557562
 
-            };
-            Assert.That(ExpressionCalculator.Count(str,table), Is.EqualTo(number));
-        }
+        //    };
+        //    Assert.That(ExpressionCalculator.Count(str,table), Is.EqualTo(number));
+        //}
     }
 }

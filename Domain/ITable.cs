@@ -13,6 +13,7 @@ namespace Domain
         int RowsCount { get; set; }
         int MaxChangedColumn { get; set; }
         int MaxChangedRow { get; set; }
+        Dictionary<Point, Cell> GetTable();
 
         Cell this[int x, int y] { get; set; }
         Cell this[Point point] { get; set; }
