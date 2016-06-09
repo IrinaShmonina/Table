@@ -17,10 +17,7 @@ namespace Infrastructure
             {
                 var str = "(" + ConvertLettersToNumbers(m.Groups["letters"].Value).ToString() + ";" + m.Groups["numbers"].Value + ")";
                 output = pattern.Replace(output, str, 1);
-                // еще можно запомнить срок жизни access_token - expires_in,
-                // если нужно
             }
-            //Regex.Replace(input, pattern);
             return output;
         }
         public static string ConvertNumbersToLetters(int number)

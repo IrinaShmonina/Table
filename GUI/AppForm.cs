@@ -304,7 +304,7 @@ namespace GUI
             for (int x = 1; x <= table.ColumnsCount; x++)
             {
                 var i = x;
-                if (ColumnsCoords[currentShift.Width + i] + Cell.Width < SystemInformation.PrimaryMonitorSize.Width)//SystemInformation.PrimaryMonitorSize.Width
+                if (ColumnsCoords[currentShift.Width + i] + Cell.Width < SystemInformation.PrimaryMonitorSize.Width)
                     maxX++;
                 else break;
             }
@@ -312,7 +312,7 @@ namespace GUI
             for (int y = 1; y <= table.RowsCount; y++)
             {
                 var j = y;
-                if (RowsCoords[currentShift.Height + j] + Cell.Height < SystemInformation.PrimaryMonitorSize.Height)//SystemInformation.PrimaryMonitorSize.Height
+                if (RowsCoords[currentShift.Height + j] + Cell.Height < SystemInformation.PrimaryMonitorSize.Height)
                     maxY++;
                 else break;
             }

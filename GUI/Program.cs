@@ -17,11 +17,10 @@ namespace GUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var container = new StandardKernel();//DI container
+            var container = new StandardKernel();
             container.Bind<IBuffer>().To<Domain.Buffer>();
             container.Bind<ITable>().To<Table>();
             container.Bind<ISerializer>().To<JsonSerializer>();
-            container.Bind<ILoader>().To<FileLoader>();
             var form = container.Get<AppForm>();
             Application.Run(form);
         }

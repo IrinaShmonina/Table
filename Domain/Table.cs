@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +20,8 @@ namespace Domain
 
         public IBuffer buffer;
         public ISerializer serializer;
-        public ILoader loader;
 
-        public Table(IBuffer buffer, ISerializer serializer, ILoader loader)
+        public Table(IBuffer buffer, ISerializer serializer)
         {
 
             ColumnsCount = 200;
@@ -31,7 +31,7 @@ namespace Domain
 
             table = new Dictionary<Point, Cell>();
 
-            for (int x = 1; x <= ColumnsCount; x++) // инициализация словаря
+            for (int x = 1; x <= ColumnsCount; x++)
             {
                 for (int y = 1; y <= RowsCount; y++)
                 {
@@ -41,32 +41,7 @@ namespace Domain
 
             this.buffer = buffer;
             this.serializer = serializer;
-            this.loader = loader;
         }
-
-        //public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInPixels, int yShiftInCells)
-        //{
-        //    var result = new Dictionary<int, int>();
-        //    var yCoord = yShiftInPixels;
-        //    for (int i = yShiftInCells + 1; i <= RowsCount; i++)
-        //    {
-        //        result.Add(i, yCoord);
-        //        yCoord += Cell.Height;
-        //    }
-        //    return result;
-        //}
-
-        //public Dictionary<int, int> GetShiftedColumnsCoords(int xShiftInPixels, int xShiftInCells)
-        //{
-        //    var result = new Dictionary<int, int>();
-        //    var xCoord = xShiftInPixels;
-        //    for (int i = xShiftInCells + 1; i <= ColumnsCount; i++)
-        //    {
-        //        result.Add(i, xCoord);
-        //        xCoord += Cell.Width;
-        //    }
-        //    return result;
-        //}
 
         public Dictionary<Point, Cell> GetTable()
         {
@@ -82,7 +57,6 @@ namespace Domain
             set
             {
                 table[new Point(x, y)] = value;
-                //table[new Point(x, y)].SetNewCoords(x, y);
             }
         }
         public Cell this[Point point]
@@ -94,7 +68,6 @@ namespace Domain
             set
             {
                 table[point] = value;
-                //table[point].SetNewCoords(point.X, point.Y);
             }
         }
 
@@ -149,6 +122,7 @@ namespace Domain
             if (columnIndex <= MaxChangedColumn) MaxChangedColumn--;
             Resize();
         }
+
         public void PushData(Point point, string data)
         {
 
@@ -157,6 +131,7 @@ namespace Domain
             if (point.Y >= MaxChangedRow) MaxChangedRow = point.Y;
             Resize();
         }
+
         public void SetFormula(Point point, string data)
         {
             table[point].SetFormula(data);
@@ -189,9 +164,6 @@ namespace Domain
                     if (x > oldTableWidth || y > oldTableHeight)
                         table.Add(new Point(x, y), new Cell(x, y));
         }
-
-
-
 
         public void CutRow(int rowIndex)
         {
@@ -259,27 +231,16 @@ namespace Domain
             }
         }
 
-
         public void UploadData(string path)
         {
             var serializedTable = serializer.Serialize(table);
-            loader.UpLoad(serializedTable, path);
+            File.WriteAllText(path, serializedTable);
         }
 
         public void DownloadData(string path)
         {
-            //try
-            //{
-                var downloadedTable = loader.DownLoad(path);
-                table = (Dictionary<Point, Cell>)serializer.Deserialize(table.GetType(), downloadedTable);
-            //}
-            //catch()
+            var downloadedTable = File.ReadAllText(path);
+            table = (Dictionary<Point, Cell>)serializer.Deserialize(table.GetType(), downloadedTable);
         }
-
-
-
-
-
-        
     }
 }
