@@ -16,7 +16,9 @@ namespace Domain
                 {"add",new Func<double, double, double>((x, y) => x + y)},
                 {"mult",new Func<double, double, double>((x, y) => x * y)},
                 {"sub",new Func<double, double, double>((x, y) => x - y)},
-                {"div",new Func<double, double, double>((x, y) => x / y)}
+                {"div",new Func<double, double, double>((x, y) => x / y)},
+                {"pow",new Func<double,double,double>((x, y) => Math.Pow(x,y))},
+                {"sqrt",new Func<double,double,double>((x, y) => Math.Pow(x,1/y))}
             };
 
 
