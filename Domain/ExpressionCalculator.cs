@@ -24,7 +24,7 @@ namespace Domain
                     })},
                 {"mult",new Func<double[], double>(x =>
                     {
-                        double result = 0;
+                        double result = 1;
                         for (int i = 0; i < x.Length;i++)
                         {
                             result *= x[i];
@@ -48,7 +48,7 @@ namespace Domain
         public static double Count(string expression, Dictionary<Point, Cell> table)
         {
             var point = default(Point);
-            if (TryParse(expression, out point))
+            if (ExpressionParser.TryParse(expression, out point))
             {
                 table[point].SetChangedAnotherCell();
                 try
@@ -62,8 +62,8 @@ namespace Domain
             }
             if (expression == "" || expression == null) return 0;
 
-            if (IsNumber(expression)) return double.Parse(expression.Trim('(', ')'));
-            var nameAndArgs = GetNameAndArgs(expression);
+            if (ExpressionParser.IsNumber(expression)) return double.Parse(expression.Trim('(', ')'));
+            var nameAndArgs = ExpressionParser.GetNameAndArgs(expression);
             var func = nameToFunc[nameAndArgs.Item1];
             var args = new double[nameAndArgs.Item2.Length];
             for (int i = 0; i < nameAndArgs.Item2.Length;i++ )
@@ -73,57 +73,7 @@ namespace Domain
             return func(args);
         }
 
-        public static Tuple<string, string[]> GetNameAndArgs(string expression)
-        {
-            string pattern = @"(.*?)[(](.*)[)]";
-            var result = Regex.Match(expression, pattern);
-
-            var args = GetArgs(result.Groups[2].ToString());
-            return new Tuple<string, string[]>(result.Groups[1].ToString(),args);
-        }
-
-        public static string[] GetArgs(string expression)
-        {
-            List<string> list= new List<string>();
-            var balance = 0;
-            var counter=0;
-            for (int i = 0; i < expression.Length; i++)
-            {
-                if (expression[i] == ';' && balance == 0)
-                {
-                    list.Add(expression.Substring(counter, i - counter));
-                    counter = i+1;
-                }
-                if (expression[i] == '(') balance++;
-                if (expression[i] == ')') balance--;
-                if (i == expression.Length - 1)
-                {
-                    list.Add(expression.Substring(counter, i + 1 - counter));
-                    return list.ToArray();
-                }
-                
-            }
-            return null;
-        }
         
-        public static bool TryParse(string s, out Point result)
-        {
-            string pattern = @"^\((\d+);(\d+)\)$";
-            if (Regex.IsMatch(s, pattern))
-            {
-                var m = Regex.Match(s, pattern);
-                result = new Point(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value));
-                return true;
-            }
-            result = default(Point);
-            return false;
-        }
-
-        public static bool IsNumber(string s)
-        {
-            string pattern = @"^[(]?[-]?\d+[)]?$";
-            return Regex.IsMatch(s, pattern);
-        }
 
     }
 }
