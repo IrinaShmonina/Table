@@ -10,8 +10,8 @@ namespace Domain
     {
         public const int Width = 60;
         public const int Height = 20;
-        public int ColumnNumber { get; private set; }
-        public int RowNumber { get; private set; }
+        //public int ColumnNumber { get; private set; }
+        //public int RowNumber { get; private set; }
         public string Data { get; private set; }
         public string Formula { get; private set; }
         public bool ChangesAnotherCell { get; private set; }
@@ -19,8 +19,8 @@ namespace Domain
 
         public Cell(int columnNumber, int rowNumber, string data = "", string formula = "")
         {
-            this.ColumnNumber = columnNumber;
-            this.RowNumber = rowNumber;
+            //this.ColumnNumber = columnNumber;
+            //this.RowNumber = rowNumber;
             this.Data = data;
             this.Formula = formula;
             this.ChangesAnotherCell = false;
@@ -34,11 +34,11 @@ namespace Domain
             Formula = f;
         }
         //добавил
-        public void SetNewCoords(int x, int y)
-        {
-            ColumnNumber = x;
-            RowNumber = y;
-        }
+        //public void SetNewCoords(int x, int y)
+        //{
+        //    ColumnNumber = x;
+        //    RowNumber = y;
+        //}
         public void SetChangedAnotherCell()
         {
             ChangesAnotherCell = true;

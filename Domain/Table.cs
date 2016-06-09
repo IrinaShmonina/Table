@@ -80,7 +80,7 @@ namespace Domain
             set
             {
                 table[new Point(x, y)] = value;
-                table[new Point(x, y)].SetNewCoords(x, y);
+                //table[new Point(x, y)].SetNewCoords(x, y);
             }
         }
         public Cell this[Point point]
@@ -92,7 +92,7 @@ namespace Domain
             set
             {
                 table[point] = value;
-                table[point].SetNewCoords(point.X, point.Y);
+                //table[point].SetNewCoords(point.X, point.Y);
             }
         }
 
