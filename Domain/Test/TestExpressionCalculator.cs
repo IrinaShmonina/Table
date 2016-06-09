@@ -12,39 +12,39 @@ namespace Domain
     [TestFixture]
     public class TestExpressionCalculator
     {
-        [TestCase("=add((1;1);(2;2))",true)]
-        [TestCase("=add(add((1;1);(2;2));(2;2))",true)]
-        [TestCase("=(1;1)",true)]
-        [TestCase("(11)",false)]
-        [TestCase("(1;1)",false)]
-        [TestCase("=(1;",false)]
-        [TestCase("=(11)",false)]
-        [TestCase("==;",false)]
+        [TestCase("=add((1;1);(2;2))", true)]
+        [TestCase("=add(add((1;1);(2;2));(2;2))", true)]
+        [TestCase("=(1;1)", true)]
+        [TestCase("(11)", false)]
+        [TestCase("(1;1)", false)]
+        [TestCase("=(1;", false)]
+        [TestCase("=(11)", false)]
+        [TestCase("==;", false)]
         [TestCase("==add((1;1);(2;2));", false)]
-        public void TestIsCorrect(string start,bool result)
+        public void TestIsCorrect(string start, bool result)
         {
-            Assert.That(ExpressionCalculator.IsCorrect(start),Is.EqualTo(result));
+            Assert.That(ExpressionCalculator.IsCorrect(start), Is.EqualTo(result));
         }
 
 
-        [TestCase("add((1;1);(2;2))","add","(1;1)","(2;2)")]
-        [TestCase("add(add((1;1);(2;2));(2;2))", "add","add((1;1);(2;2))","(2;2)")]
+        [TestCase("add((1;1);(2;2))", "add", "(1;1)", "(2;2)")]
+        [TestCase("add(add((1;1);(2;2));(2;2))", "add", "add((1;1);(2;2))", "(2;2)")]
         [TestCase("add(mult((1;1);(2;2));(2;2))", "add", "mult((1;1);(2;2))", "(2;2)")]
         public void TestGetNameAndArgs(string str, string name, string arg1, string arg2)
         {
-            Assert.That(ExpressionCalculator.GetNameAndArgs(str).Item1,Is.EqualTo(name));
-            Assert.That(ExpressionCalculator.GetNameAndArgs(str).Item2,Is.EqualTo(arg1));
-            Assert.That(ExpressionCalculator.GetNameAndArgs(str).Item3,Is.EqualTo(arg2));
+            Assert.That(ExpressionCalculator.GetNameAndArgs(str).Item1, Is.EqualTo(name));
+            Assert.That(ExpressionCalculator.GetNameAndArgs(str).Item2, Is.EqualTo(arg1));
+            Assert.That(ExpressionCalculator.GetNameAndArgs(str).Item3, Is.EqualTo(arg2));
         }
 
 
 
-        [Test,TestCaseSource(nameof(DivideCases))]
+        [Test, TestCaseSource(nameof(DivideCases))]
         public void TestTryParse(string str, bool resulte, Point pointResulte)
         {
-            Point p=default(Point);
-            Assert.That(ExpressionCalculator.TryParse(str,out p), Is.EqualTo(resulte));
-            Assert.That(p,Is.EqualTo(pointResulte));
+            Point p = default(Point);
+            Assert.That(ExpressionCalculator.TryParse(str, out p), Is.EqualTo(resulte));
+            Assert.That(p, Is.EqualTo(pointResulte));
         }
         static object[] DivideCases =
         {
