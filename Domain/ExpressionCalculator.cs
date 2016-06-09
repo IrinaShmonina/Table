@@ -10,23 +10,39 @@ namespace Domain
 {
     public static class ExpressionCalculator
     {
-        private static Dictionary<string, Func<double, double, double>> nameToFunc =
-            new Dictionary<string, Func<double, double, double>>()
+        private static Dictionary<string, Func<double[], double>> nameToFunc =
+            new Dictionary<string, Func<double[], double>>()
             {
-                {"add",new Func<double, double, double>((x, y) => x + y)},
-                {"mult",new Func<double, double, double>((x, y) => x * y)},
-                {"sub",new Func<double, double, double>((x, y) => x - y)},
-                {"div",new Func<double, double, double>((x, y) => x / y)},
-                {"pow",new Func<double,double,double>((x, y) => Math.Pow(x,y))},
-                {"sqrt",new Func<double,double,double>((x, y) => Math.Pow(x,1/y))}
+                {"add",new Func<double[], double>(x =>
+                    {
+                        double result = 0;
+                        for (int i = 0; i < x.Length;i++)
+                        {
+                            result += x[i];
+                        }
+                        return result;
+                    })},
+                {"mult",new Func<double[], double>(x =>
+                    {
+                        double result = 0;
+                        for (int i = 0; i < x.Length;i++)
+                        {
+                            result *= x[i];
+                        }
+                        return result;
+                    })},
+                {"sub",new Func<double[], double>(x => x[0] - x[1])},
+                {"div",new Func<double[], double>(x => x[0] / x[1])},
+                {"pow",new Func<double[], double>(x => Math.Pow(x[0],x[1]))},
+                {"sqrt",new Func<double[], double>(x => Math.Pow(x[0],1/x[1]))},
+                {"inv",new Func<double[], double>(x => -x[0])},
             };
-
 
         public static bool IsCorrect(this string str)
         {
-            var pattern = @"^=\w*[(](.*?[;].*?)[)]$";
-            var result = Regex.IsMatch(str, pattern);
-            return result;
+            var pattern = @"^=\w*[(]((.*?[;])*.*?)[)]$";
+            var twoArgresult = Regex.IsMatch(str, pattern);
+            return twoArgresult;
         }
 
         public static double Count(string expression, Dictionary<Point, Cell> table)
@@ -35,36 +51,61 @@ namespace Domain
             if (TryParse(expression, out point))
             {
                 table[point].SetChangedAnotherCell();
-                return double.Parse(table[point].Data);
+                try
+                {
+                    return double.Parse(table[point].Data);
+                }
+                catch(System.FormatException)
+                {
+                    return 0;
+                }
             }
-            if (IsNumber(expression)) return double.Parse(expression.Trim('(',')'));
+            if (expression == "" || expression == null) return 0;
+
+            if (IsNumber(expression)) return double.Parse(expression.Trim('(', ')'));
             var nameAndArgs = GetNameAndArgs(expression);
             var func = nameToFunc[nameAndArgs.Item1];
-            return func(Count(nameAndArgs.Item2, table), Count(nameAndArgs.Item3, table));
+            var args = new double[nameAndArgs.Item2.Length];
+            for (int i = 0; i < nameAndArgs.Item2.Length;i++ )
+            {
+                args[i] = Count(nameAndArgs.Item2[i], table);
+            }
+            return func(args);
         }
 
-        public static Tuple<string, string, string> GetNameAndArgs(string expression)
+        public static Tuple<string, string[]> GetNameAndArgs(string expression)
         {
             string pattern = @"(.*?)[(](.*)[)]";
             var result = Regex.Match(expression, pattern);
 
             var args = GetArgs(result.Groups[2].ToString());
-            return new Tuple<string, string, string>(result.Groups[1].ToString(),
-                args.Item1, args.Item2);
+            return new Tuple<string, string[]>(result.Groups[1].ToString(),args);
         }
 
-        public static Tuple<string, string> GetArgs(string expression)
+        public static string[] GetArgs(string expression)
         {
+            List<string> list= new List<string>();
             var balance = 0;
+            var counter=0;
             for (int i = 0; i < expression.Length; i++)
             {
                 if (expression[i] == ';' && balance == 0)
-                    return Tuple.Create(expression.Substring(0, i), expression.Substring(i + 1));
+                {
+                    list.Add(expression.Substring(counter, i - counter));
+                    counter = i+1;
+                }
                 if (expression[i] == '(') balance++;
                 if (expression[i] == ')') balance--;
+                if (i == expression.Length - 1)
+                {
+                    list.Add(expression.Substring(counter, i + 1 - counter));
+                    return list.ToArray();
+                }
+                
             }
             return null;
         }
+        
         public static bool TryParse(string s, out Point result)
         {
             string pattern = @"^\((\d+);(\d+)\)$";
