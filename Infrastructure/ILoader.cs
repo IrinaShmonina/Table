@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure
 {
-    public interface ISerializer
+    public interface ILoader
     {
-        string Serialize(object obj);
-        object Deserialize(Type type, string data);
+        void UpLoad(string data, string path);
+        string DownLoad(string path);
     }
 }

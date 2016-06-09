@@ -19,8 +19,9 @@ namespace Domain
 
         public IBuffer buffer;
         public ISerializer serializer;
+        public ILoader loader;
 
-        public Table(IBuffer buffer, ISerializer serializer)
+        public Table(IBuffer buffer, ISerializer serializer, ILoader loader)
         {
 
             ColumnsCount = 200;
@@ -40,6 +41,7 @@ namespace Domain
 
             this.buffer = buffer;
             this.serializer = serializer;
+            this.loader = loader;
         }
 
         //public Dictionary<int, int> GetShiftedRowsCoords(int yShiftInPixels, int yShiftInCells)
@@ -258,14 +260,20 @@ namespace Domain
         }
 
 
-        public void Serialize()
+        public void UploadData(string path)
         {
-            serializer.Serialise(table);
+            var serializedTable = serializer.Serialize(table);
+            loader.UpLoad(serializedTable, path);
         }
 
-        public void Deserialize()
+        public void DownloadData(string path)
         {
-            table = (Dictionary<Point, Cell>)serializer.Deserialize(table.GetType());
+            //try
+            //{
+                var downloadedTable = loader.DownLoad(path);
+                table = (Dictionary<Point, Cell>)serializer.Deserialize(table.GetType(), downloadedTable);
+            //}
+            //catch()
         }
 
 

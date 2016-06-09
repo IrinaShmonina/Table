@@ -26,8 +26,11 @@ namespace GUI
         private VScrollBar vScroller;
         private HScrollBar hScroller;
 
-        private Button serialize;
-        private Button deserialize;
+        private Button uploadData;
+        private Button downloadData;
+
+        private OpenFileDialog openFileDialog;
+        private SaveFileDialog saveFileDialog;
 
         private Dictionary<Point, TextBox> textBoxes;
         private Dictionary<Point, Label> labels;
@@ -47,7 +50,6 @@ namespace GUI
             this.table = table;
             this.Text = "Электронная Таблица";
             this.MinimumSize = new Size(800, 600);
-            //this.AutoSize = true;
             this.WindowState = FormWindowState.Maximized;
             this.SizeChanged += (sender, args) =>
             {
@@ -62,8 +64,8 @@ namespace GUI
                 new ToolStripMenuItem("Файл",null,
                     new ToolStripMenuItem[]
                     {
-                        new ToolStripMenuItem("Сохранить", null,(s,a) => SerializeData()),
-                        new ToolStripMenuItem("Загрузить", null,(s,a) => DeserializeData()),                        
+                        new ToolStripMenuItem("Сохранить", null,(s,a) => UploadData()),
+                        new ToolStripMenuItem("Загрузить", null,(s,a) => DownloadData()),                        
                     }
                     ),
                 new ToolStripMenuItem("Редактирование",null,
@@ -129,25 +131,30 @@ namespace GUI
             };
             Controls.Add(hScroller);
 
-            serialize = new Button();
-            serialize.Location = new Point(570, 30);
-            serialize.Size = new Size(90, 40);
-            serialize.Text = "Сохранить данные";
-            serialize.Click += (sender, args) =>
+            uploadData = new Button();
+            uploadData.Location = new Point(570, 30);
+            uploadData.Size = new Size(90, 40);
+            uploadData.Text = "Сохранить данные";
+            uploadData.Click += (sender, args) =>
             {
-                SerializeData();
+                UploadData();
             };
-            Controls.Add(serialize);
+            Controls.Add(uploadData);
 
-            deserialize = new Button();
-            deserialize.Location = new Point(670, 30);
-            deserialize.Size = new Size(90, 40);
-            deserialize.Text = "Загрузить данные";
-            deserialize.Click += (sender, args) =>
+            downloadData = new Button();
+            downloadData.Location = new Point(670, 30);
+            downloadData.Size = new Size(90, 40);
+            downloadData.Text = "Загрузить данные";
+            downloadData.Click += (sender, args) =>
             {
-                DeserializeData();
+                DownloadData();
             };
-            Controls.Add(deserialize);
+            Controls.Add(downloadData);
+
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Text files(*.tbl)|*.tbl";
+            saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Text files(*.tbl)|*.tbl";
 
             ColumnsCoords = GetShiftedColumnsCoords(currentShift.Width);
             RowsCoords = GetShiftedRowsCoords(currentShift.Height);
@@ -259,7 +266,7 @@ namespace GUI
                     Controls.Add(textbox);
                 }
             }
-            #endregion//заполнение текстбокса
+            #endregion
 
 
             DrawTable();
@@ -348,22 +355,45 @@ namespace GUI
                 }
             }
         }
-        void SerializeData()
+        void UploadData()
         {
-            table.Serialize();
-            DrawTable();
+            if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = saveFileDialog.FileName;
+            if (filename.Substring(filename.Length - 4, 4) == ".tbl")
+            {
+                table.UploadData(filename);
+                MessageBox.Show("Файл сохранен!");
+                DrawTable();
+            }
+            else
+            {
+                MessageBox.Show("Неверное расширение!");
+            }
         }
-        void DeserializeData()
+        void DownloadData()
         {
             try
             {
-                table.Deserialize();
+                if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                    return;
+                string filename = openFileDialog.FileName;
+                if (filename.Substring(filename.Length - 4, 4) == ".tbl")
+                {
+                    table.DownloadData(filename);
+                    DrawTable();
+                    MessageBox.Show("Файл открыт!");
+                }
+                else
+                {
+                    MessageBox.Show("Неверное расширение!");
+                }
             }
-            catch (FileNotFoundException ex)
+            catch (FileNotFoundException)
             {
                 MessageBox.Show("Нечего загружать!");
             }
-            DrawTable();
+            
         }
         void SetFormula(Point point, string formula)
         {

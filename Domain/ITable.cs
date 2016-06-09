@@ -34,7 +34,7 @@ namespace Domain
         void SetFormula(Point point, string data);
         void Resize();
         void Resize(double deltaX, double deltaY);
-        void Serialize();
-        void Deserialize();
+        void UploadData(string path);
+        void DownloadData(string path);
     }
 }

@@ -11,16 +11,13 @@ namespace Infrastructure
 {
     public class JsonSerializer : ISerializer
     {
-        public void Serialise(object obj)
+        public string Serialize(object obj)
         {
-            var serializedData = JsonConvert.SerializeObject(obj);
-            File.WriteAllText("doc.txt", serializedData);
+            return JsonConvert.SerializeObject(obj);
         }
-        public object Deserialize(Type type)
+        public object Deserialize(Type type, string data)
         {
-            var deserializedData = JsonConvert.DeserializeObject(File.ReadAllText("doc.txt"), type);
-            return deserializedData;
-
+            return JsonConvert.DeserializeObject(data, type);
         }
     }
 }

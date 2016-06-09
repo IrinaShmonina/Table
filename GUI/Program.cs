@@ -12,6 +12,7 @@ namespace GUI
 {
     class Program
     {
+        [STAThreadAttribute]
         static void Main(string[] args)
         {
             Application.EnableVisualStyles();
@@ -20,6 +21,7 @@ namespace GUI
             container.Bind<IBuffer>().To<Domain.Buffer>();
             container.Bind<ITable>().To<Table>();
             container.Bind<ISerializer>().To<JsonSerializer>();
+            container.Bind<ILoader>().To<FileLoader>();
             var form = container.Get<AppForm>();
             Application.Run(form);
         }
